@@ -1,114 +1,85 @@
-from random import shuffle
+from itertools import islice
 
 
-class Node:
+graph_a = {
+    'A': [('B', 2), ('C', 4)],
+    'B': [('D', 1), ('E', 6)],
+    'C': [('E', 9), ('F', 3)],
+    'D': [],
+    'E': [('D', 7)],
+    'F': [],
+}
 
-    def __init__(self, label, direct_successors_and_edge_weights=[], color=None):
-        self.label = label
-        self.direct_successors_and_edge_weights = direct_successors_and_edge_weights
-        self.visited = False
-        self.shortest_path_value = float('inf')
-        self.shortest_path_predecessor = None
-
-
-a = Node('A')
-b = Node('B')
-c = Node('C')
-d = Node('D')
-e = Node('E')
-f = Node('F')
-
-a.direct_successors_and_edge_weights = [(b, 2), (c, 4)]
-b.direct_successors_and_edge_weights = [(d, 1), (e, 6)]
-c.direct_successors_and_edge_weights = [(e, 9), (f, 3)]
-d.direct_successors_and_edge_weights = []
-e.direct_successors_and_edge_weights = [(d, 7)]
-f.direct_successors_and_edge_weights = []
-
-graph_a = [a, b, c, d, e, f]
+graph_b = {
+    'G': [('H', 1), ('I', 1), ('L', 1)],
+    'H': [('K', 1)],
+    'I': [],
+    'J': [('I', 1), ('K', 1), ('L', 1), ('M', 1)],
+    'K': [],
+    'L': [('I', 1)],
+    'M': [('G', 1), ('K', 1)],
+}
 
 
-g = Node('G')
-h = Node('H')
-i = Node('I')
-j = Node('J')
-k = Node('K')
-l = Node('L')
-m = Node('M')
+def topological_order(graph):
 
-g.direct_successors_and_edge_weights = [(h, 1), (i, 1), (l, 1)]
-h.direct_successors_and_edge_weights = [(k, 1)]
-i.direct_successors_and_edge_weights = []
-j.direct_successors_and_edge_weights = [(i, 1), (k, 1), (l, 1), (m, 1)]
-k.direct_successors_and_edge_weights = []
-l.direct_successors_and_edge_weights = [(i, 1)]
-m.direct_successors_and_edge_weights = [(g, 1), (k, 1)]
+    reverse_topologically_ordered_nodes = []
 
-graph_b = [g, h, i, j, k, l, m]
-
-
-def topological_sort(graph):
-
-    topologically_sorted_graph = []
+    visited_nodes = set()
 
     def dfs(node):
-        node.visited = True
-        for direct_successor, edge_weight in node.direct_successors_and_edge_weights:
-            if not direct_successor.visited:
+        for direct_successor, edge_weight in graph[node]:
+            if direct_successor not in visited_nodes:
                 dfs(direct_successor)
-        # O(n)!
-        topologically_sorted_graph.insert(0, node)
+        reverse_topologically_ordered_nodes.append(node)
+        visited_nodes.add(node)
 
     for node in graph:
-        if not node.visited:
+        if node not in visited_nodes:
             dfs(node)
 
-    return topologically_sorted_graph
+    return list(reversed(reverse_topologically_ordered_nodes))
 
 
-def shortest_path(graph, start_node, target_node):
+def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 
-    start_node.shortest_path_value = 0
+    shortest_path_values       = {start_node: 0}
+    shortest_path_predecessors = {start_node: None}
 
-    # start with start_node
-    for node in graph:
+    start_node_index = topologically_ordered_nodes.index(start_node)
 
-        for direct_successor, edge_weight in node.direct_successors_and_edge_weights:
+    for current_node in islice(topologically_ordered_nodes, start_node_index, None):
 
-            if direct_successor.shortest_path_value > node.shortest_path_value + edge_weight:
-                direct_successor.shortest_path_value = node.shortest_path_value + edge_weight
-                direct_successor.shortest_path_predecessor = node
+        for direct_successor, edge_weight in graph[current_node]:
 
-    shortest_path_nodes = [target_node]
+            current_node_shortest_path_value     = shortest_path_values.get(current_node, float('inf'))
+            direct_successor_shortest_path_value = shortest_path_values.get(direct_successor, float('inf'))
 
+            if current_node_shortest_path_value + edge_weight < direct_successor_shortest_path_value:
+                shortest_path_values[direct_successor]       = current_node_shortest_path_value + edge_weight
+                shortest_path_predecessors[direct_successor] = current_node
+
+    reverse_shortest_path = []
     current_node = target_node
-    while current_node.shortest_path_predecessor:
 
-        # O(n)!
-        shortest_path_nodes.insert(0, current_node.shortest_path_predecessor)
-        current_node = current_node.shortest_path_predecessor
+    while current_node:
+        reverse_shortest_path.append(current_node)
+        current_node = shortest_path_predecessors.get(current_node)
 
-    return shortest_path_nodes
+    return list(reversed(reverse_shortest_path))
 
 
-def is_topologically_sorted(graph):
-    for node in graph:
-        for direct_successor, edge_weight in node.direct_successors_and_edge_weights:
-            if graph.index(node) > graph.index(direct_successor):
+def is_topologically_ordered(graph, topologically_ordered_nodes):
+    for node, direct_successors in graph.iteritems():
+        for direct_successor, edge_weight in direct_successors:
+            if topologically_ordered_nodes.index(node) > topologically_ordered_nodes.index(direct_successor):
                 return False
     return True
 
 
-def reset(graph):
-    for node in graph:
-        node.visited = False
-        node.shortest_path_value = float('inf')
-        node.shortest_path_predecessor = None
-
-
 graph_tests = [
-    (graph_a, graph_a[0], graph_a[4], [a, b, e]),
-    (graph_b, graph_b[0], graph_b[2], [g, i]),
+    (graph_a, 'A', 'E', ['A', 'B', 'E']),
+    (graph_b, 'G', 'I', ['G', 'I']),
 ]
 
 
@@ -116,22 +87,16 @@ def test_graphs():
 
     for graph, start_node, target_node, expected_shortest_path in graph_tests:
 
-        for _ in xrange(100):
+        for _ in xrange(10000):
 
-            reset(graph)
+            topologically_ordered_nodes = topological_order(graph)
 
-            shuffle(graph)
-
-            topologically_sorted_graph = topological_sort(graph)
-
-            if not is_topologically_sorted(topologically_sorted_graph):
-                print 'NOT TOPOLOGICALLY SORTED'
+            if not is_topologically_ordered(graph, topologically_ordered_nodes):
+                print 'NOT TOPOLOGICALLY ORDERED'
                 break
 
-            if shortest_path(topologically_sorted_graph, start_node, target_node) != expected_shortest_path:
+            if shortest_path(graph, topologically_ordered_nodes, start_node, target_node) != expected_shortest_path:
                 print 'NOT SHORTEST PATH'
                 break
-
-        reset(graph)
 
 test_graphs()
