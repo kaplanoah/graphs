@@ -1,26 +1,6 @@
 from itertools import islice
 
 
-graph_a = {
-    'A': [('B', 2), ('C', 4)],
-    'B': [('D', 1), ('E', 6)],
-    'C': [('E', 9), ('F', 3)],
-    'D': [],
-    'E': [('D', 7)],
-    'F': [],
-}
-
-graph_b = {
-    'G': [('H', 1), ('I', 1), ('L', 1)],
-    'H': [('K', 1)],
-    'I': [],
-    'J': [('I', 1), ('K', 1), ('L', 1), ('M', 1)],
-    'K': [],
-    'L': [('I', 1)],
-    'M': [('G', 1), ('K', 1)],
-}
-
-
 def topological_order_dfs(graph):
 
     reverse_topologically_ordered_nodes = []
@@ -75,7 +55,7 @@ def topological_order_kahns(graph):
 def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 
     shortest_path_values       = {start_node: 0}
-    shortest_path_predecessors = {start_node: None}
+    shortest_path_predecessors = {}
 
     start_node_index = topologically_ordered_nodes.index(start_node)
 
@@ -108,11 +88,29 @@ def is_topologically_ordered(graph, topologically_ordered_nodes):
     return True
 
 
-def test_graphs():
+def test():
 
     graph_tests = [
-        (graph_a, 'A', 'E', ['A', 'B', 'E']),
-        (graph_b, 'G', 'I', ['G', 'I']),
+        ({
+            'A': [('B', 2), ('C', 4)],
+            'B': [('D', 1), ('E', 6)],
+            'C': [('E', 9), ('F', 3)],
+            'D': [],
+            'E': [('D', 7)],
+            'F': [],
+        },
+        'A', 'E', ['A', 'B', 'E']),
+
+        ({
+            'G': [('H', 1), ('I', 1), ('L', 1)],
+            'H': [('K', 1)],
+            'I': [],
+            'J': [('I', 1), ('K', 1), ('L', 1), ('M', 1)],
+            'K': [],
+            'L': [('I', 1)],
+            'M': [('G', 1), ('K', 1)],
+        },
+        'G', 'I', ['G', 'I']),
     ]
 
     topological_ordering_algorithms = [
@@ -131,4 +129,4 @@ def test_graphs():
             if shortest_path(graph, topologically_ordered_nodes, start_node, target_node) != expected_shortest_path:
                 raise Exception('Not shortest path')
 
-test_graphs()
+test()
