@@ -21,7 +21,7 @@ graph_b = {
 }
 
 
-def topological_order(graph):
+def topological_order_dfs(graph):
 
     reverse_topologically_ordered_nodes = []
 
@@ -39,6 +39,37 @@ def topological_order(graph):
             dfs(node)
 
     return list(reversed(reverse_topologically_ordered_nodes))
+
+
+def topological_order_kahns(graph):
+
+    topologically_ordered_nodes = []
+
+    node_to_number_of_incoming_edges = {
+        node: 0 for node in graph
+    }
+
+    for node, direct_successors in graph.iteritems():
+        for direct_successor, edge_weight in direct_successors:
+            node_to_number_of_incoming_edges[direct_successor] += 1
+
+    nodes_with_no_incoming_edges = set(
+        [node for node, number_of_incoming_edges in node_to_number_of_incoming_edges.iteritems()
+         if number_of_incoming_edges == 0]
+    )
+
+    while len(nodes_with_no_incoming_edges):
+
+        node_with_no_incoming_edges = nodes_with_no_incoming_edges.pop()
+
+        topologically_ordered_nodes.append(node_with_no_incoming_edges)
+
+        for node, direct_successors in graph[node_with_no_incoming_edges]:
+            node_to_number_of_incoming_edges[node] -= 1
+            if node_to_number_of_incoming_edges[node] == 0:
+                nodes_with_no_incoming_edges.add(node)
+
+    return topologically_ordered_nodes
 
 
 def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
@@ -77,26 +108,27 @@ def is_topologically_ordered(graph, topologically_ordered_nodes):
     return True
 
 
-graph_tests = [
-    (graph_a, 'A', 'E', ['A', 'B', 'E']),
-    (graph_b, 'G', 'I', ['G', 'I']),
-]
-
-
 def test_graphs():
 
-    for graph, start_node, target_node, expected_shortest_path in graph_tests:
+    graph_tests = [
+        (graph_a, 'A', 'E', ['A', 'B', 'E']),
+        (graph_b, 'G', 'I', ['G', 'I']),
+    ]
 
+    topological_ordering_algorithms = [
+        topological_order_dfs,
+        topological_order_kahns,
+    ]
+
+    for graph, start_node, target_node, expected_shortest_path in graph_tests:
         for _ in xrange(10000):
 
-            topologically_ordered_nodes = topological_order(graph)
-
-            if not is_topologically_ordered(graph, topologically_ordered_nodes):
-                print 'NOT TOPOLOGICALLY ORDERED'
-                break
+            for topological_ordering_algorithm in topological_ordering_algorithms:
+                topologically_ordered_nodes = topological_ordering_algorithm(graph)
+                if not is_topologically_ordered(graph, topologically_ordered_nodes):
+                    raise Exception('Not topologically ordered')
 
             if shortest_path(graph, topologically_ordered_nodes, start_node, target_node) != expected_shortest_path:
-                print 'NOT SHORTEST PATH'
-                break
+                raise Exception('Not shortest path')
 
 test_graphs()
