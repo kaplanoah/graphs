@@ -1,5 +1,4 @@
 from itertools import product
-from random import shuffle
 
 
 class Node:
@@ -21,7 +20,7 @@ def color_graph_brute_force(graph, colors):
             return graph
 
 
-def color_graph_backtracing(graph, colors):
+def color_graph_backtracking(graph, colors):
 
     # implement
 
@@ -50,15 +49,6 @@ def is_graph_legally_colored(graph):
             return False
 
     return True
-
-
-def print_graph(graph):
-
-    for node in graph:
-        print 'label:     %s' % node.label
-        print 'color:     %s' % node.color
-        print 'neighbors: %s\n' % [neighbor.label for neighbor in node.neighbors]
-
 
 
 a = Node('A')
@@ -110,36 +100,23 @@ graphs = [
 
 coloring_algorithms = [
     color_graph_brute_force,
-    color_graph_backtracing,
+    color_graph_backtracking,
     color_graph_greedy,
 ]
 
 
-def test_graphs():
+colors = ['red', 'yellow', 'green', 'blue', 'purple', 'white']
 
-    colors = ['red', 'yellow', 'green', 'blue', 'purple', 'white']
+for coloring_algorithm in coloring_algorithms:
+    for graph in graphs:
 
-    for coloring_algorithm in coloring_algorithms:
+        d = max([len(node.neighbors) for node in graph])
+        d_plus_one_colors = colors[:d + 1]
 
-        for graph in graphs:
+        for node in graph:
+            node.color = None
 
-            d = max([len(node.neighbors) for node in graph])
-            d_plus_one_colors = colors[:d + 1]
+        coloring_algorithm(graph, d_plus_one_colors)
 
-            for _ in xrange(100):
-
-                shuffle(graph)
-
-                for node in graph:
-                    node.color = None
-
-                coloring_algorithm(graph, d_plus_one_colors)
-
-                if is_graph_legally_colored(graph):
-                    continue
-                else:
-                    print 'FAILED:'
-                    print_graph(graph)
-                    break
-
-test_graphs()
+        if not is_graph_legally_colored(graph):
+            raise Exception('Not legally colored')

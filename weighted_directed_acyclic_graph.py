@@ -88,45 +88,40 @@ def is_topologically_ordered(graph, topologically_ordered_nodes):
     return True
 
 
-def test():
+graph_tests = [
+    ({
+        'A': [('B', 2), ('C', 4)],
+        'B': [('D', 1), ('E', 6)],
+        'C': [('E', 9), ('F', 3)],
+        'D': [],
+        'E': [('D', 7)],
+        'F': [],
+    },
+    'A', 'E', ['A', 'B', 'E']),
 
-    graph_tests = [
-        ({
-            'A': [('B', 2), ('C', 4)],
-            'B': [('D', 1), ('E', 6)],
-            'C': [('E', 9), ('F', 3)],
-            'D': [],
-            'E': [('D', 7)],
-            'F': [],
-        },
-        'A', 'E', ['A', 'B', 'E']),
+    ({
+        'G': [('H', 1), ('I', 1), ('L', 1)],
+        'H': [('K', 1)],
+        'I': [],
+        'J': [('I', 1), ('K', 1), ('L', 1), ('M', 1)],
+        'K': [],
+        'L': [('I', 1)],
+        'M': [('G', 1), ('K', 1)],
+    },
+    'G', 'I', ['G', 'I']),
+]
 
-        ({
-            'G': [('H', 1), ('I', 1), ('L', 1)],
-            'H': [('K', 1)],
-            'I': [],
-            'J': [('I', 1), ('K', 1), ('L', 1), ('M', 1)],
-            'K': [],
-            'L': [('I', 1)],
-            'M': [('G', 1), ('K', 1)],
-        },
-        'G', 'I', ['G', 'I']),
-    ]
+topological_ordering_algorithms = [
+    topological_order_dfs,
+    topological_order_kahns,
+]
 
-    topological_ordering_algorithms = [
-        topological_order_dfs,
-        topological_order_kahns,
-    ]
+for graph, start_node, target_node, expected_shortest_path in graph_tests:
 
-    for graph, start_node, target_node, expected_shortest_path in graph_tests:
-        for _ in xrange(10000):
+    for topological_ordering_algorithm in topological_ordering_algorithms:
+        topologically_ordered_nodes = topological_ordering_algorithm(graph)
+        if not is_topologically_ordered(graph, topologically_ordered_nodes):
+            raise Exception('Not topologically ordered')
 
-            for topological_ordering_algorithm in topological_ordering_algorithms:
-                topologically_ordered_nodes = topological_ordering_algorithm(graph)
-                if not is_topologically_ordered(graph, topologically_ordered_nodes):
-                    raise Exception('Not topologically ordered')
-
-            if shortest_path(graph, topologically_ordered_nodes, start_node, target_node) != expected_shortest_path:
-                raise Exception('Not shortest path')
-
-test()
+    if shortest_path(graph, topologically_ordered_nodes, start_node, target_node) != expected_shortest_path:
+        raise Exception('Not shortest path')

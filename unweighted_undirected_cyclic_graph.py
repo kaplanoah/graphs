@@ -34,37 +34,31 @@ def shortest_path_bfs(graph, start_node, target_node):
     return list(reversed(reverse_shortest_path))
 
 
-def test():
+graph_tests = [
+    ({
+        'A': ['B', 'C'],
+        'B': ['A', 'D', 'E'],
+        'C': ['A', 'F'],
+        'D': ['B', 'E'],
+        'E': ['B', 'D'],
+        'F': ['C'],
+    },
+    'A', 'E', ['A', 'B', 'E']),
 
-    graph_tests = [
-        ({
-            'A': ['B', 'C'],
-            'B': ['A', 'D', 'E'],
-            'C': ['A', 'F'],
-            'D': ['B', 'E'],
-            'E': ['B', 'D'],
-            'F': ['C'],
-        },
-        'A', 'E', ['A', 'B', 'E']),
+    ({
+        'G': ['H', 'I', 'J'],
+        'H': ['G', 'I'],
+        'I': ['G', 'H', 'K'],
+        'J': ['G', 'L', 'M'],
+        'K': ['I', 'N'],
+        'L': ['J', 'O'],
+        'M': ['J', 'O'],
+        'N': ['K', 'O'],
+        'O': ['L', 'M', 'N'],
+    },
+    'G', 'N', ['G', 'I', 'K', 'N']),
+]
 
-        ({
-            'G': ['H', 'I', 'J'],
-            'H': ['G', 'I'],
-            'I': ['G', 'H', 'K'],
-            'J': ['G', 'L', 'M'],
-            'K': ['I', 'N'],
-            'L': ['J', 'O'],
-            'M': ['J', 'O'],
-            'N': ['K', 'O'],
-            'O': ['L', 'M', 'N'],
-        },
-        'G', 'N', ['G', 'I', 'K', 'N']),
-    ]
-
-    for graph, start_node, target_node, expected_shortest_path in graph_tests:
-        for _ in xrange(10000):
-
-            if shortest_path_bfs(graph, start_node, target_node) != expected_shortest_path:
-                raise Exception('Not shortest path')
-
-test()
+for graph, start_node, target_node, expected_shortest_path in graph_tests:
+    if shortest_path_bfs(graph, start_node, target_node) != expected_shortest_path:
+        raise Exception('Not shortest path')
