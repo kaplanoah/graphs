@@ -20,7 +20,7 @@ def color_graph_brute_force(graph, colors):
             break
 
 
-class ColorGraphBacktracking:
+class ColorGraphBacktrackingDfs:
 
     def __init__(self, graph, colors):
         self.graph = graph
@@ -104,26 +104,26 @@ k.neighbors = [h, j]
 l.neighbors = [g, i]
 
 
-k = Node('K')
-l = Node('L')
 m = Node('M')
 n = Node('N')
+o = Node('O')
+p = Node('P')
 
-k.neighbors = [l]
-l.neighbors = [k, m]
-m.neighbors = [l, n]
-n.neighbors = [m]
+m.neighbors = [n]
+n.neighbors = [m, o]
+o.neighbors = [n, p]
+p.neighbors = [o]
 
 
 graphs = [
     [a, b, c, d, e, f],
     [g, h, i, j, k, l],
-    [k, l, m, n],
+    [m, n, o, p],
 ]
 
 coloring_algorithms = [
     color_graph_brute_force,
-    ColorGraphBacktracking,
+    ColorGraphBacktrackingDfs,
     color_graph_greedy,
 ]
 
@@ -139,9 +139,9 @@ for coloring_algorithm in coloring_algorithms:
         for node in graph:
             node.color = None
 
-        if coloring_algorithm == ColorGraphBacktracking:
+        try:
             coloring_algorithm(graph, d_plus_one_colors).color_graph()
-        else:
+        except AttributeError:
             coloring_algorithm(graph, d_plus_one_colors)
 
         if not is_graph_legally_colored(graph):

@@ -1,24 +1,30 @@
 from itertools import islice
 
 
-def topological_order_dfs(graph):
+class TopologicalOrderDfs:
 
-    reverse_topologically_ordered_nodes = []
+    def __init__(self, graph):
+        self.graph = graph
 
-    visited_nodes = set()
+    def order_graph(self):
 
-    def dfs(node):
-        for direct_successor, edge_weight in graph[node]:
-            if direct_successor not in visited_nodes:
-                dfs(direct_successor)
-        reverse_topologically_ordered_nodes.append(node)
-        visited_nodes.add(node)
+        self.reverse_topologically_ordered_nodes = []
+        self.visited_nodes = set()
 
-    for node in graph:
-        if node not in visited_nodes:
-            dfs(node)
+        for node in self.graph:
+            if node not in self.visited_nodes:
+                self.order_node_dfs(node)
 
-    return list(reversed(reverse_topologically_ordered_nodes))
+        return list(reversed(self.reverse_topologically_ordered_nodes))
+
+    def order_node_dfs(self, node):
+
+        for direct_successor, edge_weight in self.graph[node]:
+            if direct_successor not in self.visited_nodes:
+                self.order_node_dfs(direct_successor)
+
+        self.reverse_topologically_ordered_nodes.append(node)
+        self.visited_nodes.add(node)
 
 
 def topological_order_kahns(graph):
@@ -112,14 +118,19 @@ graph_tests = [
 ]
 
 topological_ordering_algorithms = [
-    topological_order_dfs,
+    TopologicalOrderDfs,
     topological_order_kahns,
 ]
 
 for graph, start_node, target_node, expected_shortest_path in graph_tests:
 
     for topological_ordering_algorithm in topological_ordering_algorithms:
-        topologically_ordered_nodes = topological_ordering_algorithm(graph)
+
+        try:
+            topologically_ordered_nodes = topological_ordering_algorithm(graph).order_graph()
+        except AttributeError:
+            topologically_ordered_nodes = topological_ordering_algorithm(graph)
+
         if not is_topologically_ordered(graph, topologically_ordered_nodes):
             raise Exception('Not topologically ordered')
 
