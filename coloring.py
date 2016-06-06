@@ -17,14 +17,37 @@ def color_graph_brute_force(graph, colors):
             node.color = color_combination[index]
 
         if is_graph_legally_colored(graph):
-            return graph
+            break
 
 
-def color_graph_backtracking(graph, colors):
+class ColorGraphBacktracking:
 
-    # implement
+    def __init__(self, graph, colors):
+        self.graph = graph
+        self.colors = colors
 
-    return graph
+    def color_graph(self):
+
+        self.visited_nodes = set()
+
+        for node in self.graph:
+            if node not in self.visited_nodes:
+                self.color_node_dfs(node)
+
+    def color_node_dfs(self, node):
+
+        illegal_colors = set([neighbor.color for neighbor in node.neighbors])
+
+        for color in self.colors:
+            if color not in illegal_colors:
+                node.color = color
+                break
+
+        self.visited_nodes.add(node)
+
+        for neighbor in node.neighbors:
+            if neighbor not in self.visited_nodes:
+                self.color_node_dfs(neighbor)
 
 
 def color_graph_greedy(graph, colors):
@@ -100,7 +123,7 @@ graphs = [
 
 coloring_algorithms = [
     color_graph_brute_force,
-    color_graph_backtracking,
+    ColorGraphBacktracking,
     color_graph_greedy,
 ]
 
@@ -116,7 +139,10 @@ for coloring_algorithm in coloring_algorithms:
         for node in graph:
             node.color = None
 
-        coloring_algorithm(graph, d_plus_one_colors)
+        if coloring_algorithm == ColorGraphBacktracking:
+            coloring_algorithm(graph, d_plus_one_colors).color_graph()
+        else:
+            coloring_algorithm(graph, d_plus_one_colors)
 
         if not is_graph_legally_colored(graph):
             raise Exception('Not legally colored')
