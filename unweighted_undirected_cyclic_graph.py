@@ -34,6 +34,15 @@ def shortest_path_bfs(graph, start_node, target_node):
     return list(reversed(reverse_shortest_path))
 
 
+# notes:
+#
+# Dijkstra's, Bellman-Ford, A*
+# negative cycles
+# disconnected graphs
+
+
+# tests
+
 graph_tests = [
     ({
         'A': ['B', 'C'],

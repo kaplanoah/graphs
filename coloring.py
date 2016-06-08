@@ -62,6 +62,20 @@ def color_graph_greedy(graph, colors):
                 break
 
 
+# notes:
+#
+# might want an even ratio of colors
+# might want as few colors as possible (NP-complete)
+#
+# order matters in greedy coloring
+# can order nodes to color based on
+#     high degree
+#     number of colored neighbors
+#     high saturation (most unique neighbor colors)
+#
+# backtracking (not needed because we know D+1 colors work)
+
+
 # tests
 
 def is_graph_legally_colored(graph):

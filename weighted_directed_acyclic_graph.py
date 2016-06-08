@@ -86,6 +86,15 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
     return list(reversed(reverse_shortest_path))
 
 
+# notes:
+#
+# Dijkstra's, Bellman-Ford, A*
+# negative cycles
+# disconnected graphs
+
+
+# tests
+
 def is_topologically_ordered(graph, topologically_ordered_nodes):
     for node, direct_successors in graph.iteritems():
         for direct_successor, edge_weight in direct_successors:
