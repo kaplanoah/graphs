@@ -91,6 +91,7 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 # Dijkstra's, Bellman-Ford, A*
 # negative cycles
 # disconnected graphs
+# reverse list (or insert at beginning) operations
 
 
 # tests
