@@ -1,5 +1,27 @@
-from itertools import islice
+# find the second shortest path from a start node to a target
+# node in a weighted, directed, acyclic graph
 
+
+# nodes are represented by a dictionary of (string, list) pairs where the string
+# is the node value and the list holds tuples of the node's direct successors
+# (string, int) where the string is the direct successor's value and the int is
+# the weight of the edge to the direct successor
+
+graph = {
+    'A': [('B', 7)],
+    'B': [('A', 3), ('C', 9)],
+    'C': [],
+}
+
+
+# topological ordering (dfs)
+#
+# identify the nodes with no outgoing edges
+#
+# time:   O(N + M)  where N is the number of nodes and M is the number of edges. we go through
+#                   every node once and check if all its direct successors have been visited.
+# space:  O(N)      the ordered nodes take up N space and the call stack will use N space in
+#                   the worst case (graph is a straight line)
 
 class TopologicalOrderDfs:
 
@@ -26,6 +48,15 @@ class TopologicalOrderDfs:
         self.reverse_topologically_ordered_nodes.append(node)
         self.visited_nodes.add(node)
 
+
+# topological ordering (Khan's algorithm)
+#
+# take leaf nodes and keep removing them
+#
+# time:   O(N + M)  where N is the number of nodes and M is the number of edges. we go through
+#                   every node and check if all its direct successors have been visited. N^2
+# space:  O(N)      the output and dictionary holding the numbers of incoming edges use N space
+#                   and the set of nodes with no incoming edges uses N space in the worse case
 
 def topological_order_kahns(graph):
 
@@ -57,6 +88,18 @@ def topological_order_kahns(graph):
 
     return topologically_ordered_nodes
 
+
+# shortest path
+#
+# use topologically sorted nodes
+#
+# time:   O(N + M)  where N is the number of nodes and M is the number of edges. in the worse
+#                   case the start node is the first topologically ordered node so we go
+#                   through all the nodes and their direct successors
+#                   node and check if all its direct successors have been visited. N^2
+# space:  O(N)      the shortest path nodes, predecessors, and values use N space
+
+from itertools import islice
 
 def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 
