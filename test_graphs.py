@@ -1,12 +1,7 @@
+from coloring import Node, color_graph_brute_force, color_graph_greedy, is_graph_legally_colored
+
 from collections import defaultdict
 
-
-class Node:
-
-    def __init__(self, label):
-        self.label = label
-        self.neighbors = []
-        self.color = None
 
 
 def build_weighted_directed_graph(nodes, edges):
@@ -60,6 +55,8 @@ graph_types = {
 test_graphs = defaultdict(dict)
 
 shortest_paths = {}
+
+graphs_impossible_to_color = set()
 
 
 nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
@@ -117,3 +114,39 @@ test = 'loop'
 
 build_graphs([('A', 'B', 4), ('B', 'B', 5), ('B', 'C', 9)])
 insert_shortest_path_tests('A', 'C', ['A', 'B', 'C'], ['A', 'B', 'B', 'C'])
+graphs_impossible_to_color.add(test)
+
+
+
+
+
+
+colors = ['red', 'yellow', 'green', 'blue', 'purple', 'white']
+
+coloring_algorithms = [
+    color_graph_brute_force,
+    color_graph_greedy,
+]
+
+for coloring_algorithm in coloring_algorithms:
+    print '%s' % coloring_algorithm.__name__
+
+    for test_name, graph_types in test_graphs.iteritems():
+        print '\t%s' % test_name
+
+        graph = graph_types['unweighted_undirected_colored']
+
+        d = max([len(node.neighbors) for node in graph])
+        d_plus_one_colors = colors[:d + 1]
+
+        for node in graph:
+            node.color = None
+
+        coloring_algorithm(graph, d_plus_one_colors)
+
+        expected_colored = True
+        if test_name in graphs_impossible_to_color:
+            expected_colored = False
+
+        if is_graph_legally_colored(graph) != expected_colored:
+            raise Exception('Not legally colored: %s' % test_name)
