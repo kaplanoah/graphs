@@ -1,8 +1,9 @@
+import random
+from collections import defaultdict
+
 from coloring import Node, color_graph_brute_force, color_graph_greedy, is_graph_legally_colored
 from weighted_directed_acyclic_graph import TopologicalOrderDfs, topological_order_kahns, shortest_path as topological_shortest_path
 from unweighted_undirected_cyclic_graph import shortest_path_bfs
-
-from collections import defaultdict
 
 
 def build_weighted_directed_graph(nodes, edges):
@@ -123,9 +124,26 @@ impossible_to_color_graphs.add(test)
 cyclic_graphs.add(test)
 
 
+test = 'complete'
+
+edges = [('D', 'B', 1), ('D', 'C', 1), ('C', 'B', 1)]
+for node in nodes:
+    for neighbor in nodes:
+        if (node != neighbor) and ((node, neighbor) not in [('D', 'B'), ('D', 'C'), ('C', 'B')]):
+            edges.append((node, neighbor, random.randint(3, 9)))
+build_graphs(edges)
+insert_shortest_path_tests('D', 'B', ['D', 'B'], ['D', 'C', 'B'])
+cyclic_graphs.add(test)
 
 
+test = 'wheel'
 
+build_graphs([('A', 'B', 1), ('A', 'C', 4), ('A', 'D', 2), ('A', 'E', 6), ('A', 'F', 3),
+              ('A', 'G', 3), ('B', 'C', 3), ('C', 'D', 3), ('D', 'E', 5), ('E', 'F', 8),
+              ('F', 'G', 8), ('G', 'B', 2)])
+insert_shortest_path_tests('A', 'E', ['A', 'E'], ['A', 'D', 'E'])
+insert_shortest_path_tests('F', 'G', ['F', 'G'], ['F', 'A', 'G'])
+cyclic_graphs.add(test)
 
 
 coloring_algorithms = [
