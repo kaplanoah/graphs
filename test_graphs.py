@@ -1,8 +1,8 @@
 from coloring import Node, color_graph_brute_force, color_graph_greedy, is_graph_legally_colored
 from weighted_directed_acyclic_graph import TopologicalOrderDfs, topological_order_kahns, shortest_path as topological_shortest_path
+from unweighted_undirected_cyclic_graph import shortest_path_bfs
 
 from collections import defaultdict
-
 
 
 def build_weighted_directed_graph(nodes, edges):
@@ -62,7 +62,6 @@ impossible_to_color_graphs = set()
 cyclic_graphs = set()
 
 
-
 nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
 test = None # test name
@@ -83,28 +82,28 @@ def insert_shortest_path_tests(start_node, target_node, first_shortest_path, sec
 test = 'disconnected'
 
 build_graphs([])
-insert_shortest_path_tests('A', 'D', None, None)
+insert_shortest_path_tests('A', 'D', [], [])
 
 
 test = 'leaf'
 
 build_graphs([('A', 'B', 1), ('A', 'C', 4), ('B', 'D', 2), ('C', 'E', 3), ('D', 'F', 7),
               ('E', 'G', 1)])
-insert_shortest_path_tests('A', 'D', ['A', 'B', 'D'], None)
+insert_shortest_path_tests('A', 'D', ['A', 'B', 'D'], [])
 
 
 test = 'tree'
 
 build_graphs([('A', 'B', 2), ('A', 'C', 9), ('B', 'D', 3), ('B', 'E', 1), ('C', 'F', 4),
               ('E', 'G', 2)])
-insert_shortest_path_tests('A', 'G', ['A', 'B', 'E', 'G'], None)
+insert_shortest_path_tests('A', 'G', ['A', 'B', 'E', 'G'], [])
 
 
 test = 'cycle'
 
 build_graphs([('A', 'B', 6), ('B', 'C', 9), ('C', 'D', 4), ('D', 'E', 7), ('E', 'F', 4),
               ('F', 'G', 1), ('G', 'A', 9)])
-insert_shortest_path_tests('B', 'D', ['B', 'C', 'D'], None)
+insert_shortest_path_tests('B', 'D', ['B', 'C', 'D'], [])
 cyclic_graphs.add(test)
 
 
@@ -179,7 +178,7 @@ for topological_ordering_algorithm in topological_ordering_algorithms:
         print '\t%s' % test_name
 
         if test_name in cyclic_graphs:
-            print '\t\tSKIPPING'
+            print '\tSKIPPING'
             continue
 
         graph = graph_types['weighted_directed']
@@ -195,4 +194,18 @@ for topological_ordering_algorithm in topological_ordering_algorithms:
             raise Exception('Not topologically ordered: %s' % test_name)
 
     if topological_shortest_path(graph, topologically_ordered_nodes, start_node, target_node) != shortest_path:
+        raise Exception('Not shortest path: %s' % test_name)
+
+
+print 'shortest_path_bfs'
+
+for test_name, graph_types in test_graphs.iteritems():
+    print '\t%s' % test_name
+
+    graph = graph_types['unweighted_undirected']
+
+    start_node, target_node, shortest_path = shortest_paths[test_name][1]
+
+    if shortest_path_bfs(graph, start_node, target_node) != shortest_path:
+        print shortest_path_bfs(graph, start_node, target_node), shortest_path
         raise Exception('Not shortest path: %s' % test_name)

@@ -48,6 +48,9 @@ def shortest_path_bfs(graph, start_node, target_node):
                 queue.put(neighbor)
                 visited_nodes.add(neighbor)
 
+    if not shortest_path_previous_nodes.get(target_node):
+        return []
+
     reverse_shortest_path = []
     current_node = target_node
 
@@ -65,35 +68,3 @@ def shortest_path_bfs(graph, start_node, target_node):
 # disconnected graphs
 # reverse list (or insert at beginning) operations
 # O(B^D) runtime
-
-
-# tests
-
-graph_tests = [
-    ({
-        'A': ['B', 'C'],
-        'B': ['A', 'D', 'E'],
-        'C': ['A', 'F'],
-        'D': ['B', 'E'],
-        'E': ['B', 'D'],
-        'F': ['C'],
-    },
-    'A', 'E', ['A', 'B', 'E']),
-
-    ({
-        'G': ['H', 'I', 'J'],
-        'H': ['G', 'I'],
-        'I': ['G', 'H', 'K'],
-        'J': ['G', 'L', 'M'],
-        'K': ['I', 'N'],
-        'L': ['J', 'O'],
-        'M': ['J', 'O'],
-        'N': ['K', 'O'],
-        'O': ['L', 'M', 'N'],
-    },
-    'G', 'N', ['G', 'I', 'K', 'N']),
-]
-
-for graph, start_node, target_node, expected_shortest_path in graph_tests:
-    if shortest_path_bfs(graph, start_node, target_node) != expected_shortest_path:
-        raise Exception('Not shortest path')
