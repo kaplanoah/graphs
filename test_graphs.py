@@ -107,6 +107,13 @@ build_graphs([('A', 'B', 2), ('A', 'C', 9), ('B', 'D', 3), ('B', 'E', 1), ('C', 
 insert_shortest_path_tests('A', 'G', ['A', 'B', 'E', 'G'], [])
 
 
+test = 'negative edges'
+
+build_graphs([('A', 'B', -3), ('A', 'C', -1), ('B', 'D', -5), ('B', 'E', -4), ('C', 'F', -2),
+              ('E', 'G', -6), ('F', 'E', -1)])
+insert_shortest_path_tests('A', 'G', ['A', 'B', 'E', 'G'], ['A', 'C', 'D', 'E', 'G'])
+
+
 test = 'cycle'
 
 build_graphs([('A', 'B', 6), ('B', 'C', 9), ('C', 'D', 4), ('D', 'E', 7), ('E', 'F', 4),
@@ -123,9 +130,25 @@ insert_shortest_path_tests('A', 'F', ['A', 'D', 'F'], ['A', 'D', 'E', 'F'])
 cyclic_graphs.add(test)
 
 
+test = 'negative cyclic'
+
+build_graphs([('A', 'B', -1), ('A', 'C', -3), ('A', 'D', -7), ('B', 'C', -3), ('C', 'A', -9),
+              ('D', 'E', -4), ('D', 'F', -9), ('E', 'F', -3), ('F', 'E', -2), ('F', 'G', -9)])
+insert_shortest_path_tests('A', 'F', ['A', 'D', 'F'], ['A', 'D', 'E', 'F'])
+cyclic_graphs.add(test)
+
+
 test = 'loop'
 
 build_graphs([('A', 'B', 4), ('B', 'B', 5), ('B', 'C', 9)])
+insert_shortest_path_tests('A', 'C', ['A', 'B', 'C'], ['A', 'B', 'B', 'C'])
+impossible_to_color_graphs.add(test)
+cyclic_graphs.add(test)
+
+
+test = 'negative loop'
+
+build_graphs([('A', 'B', 4), ('B', 'B', -3), ('B', 'C', 9)])
 insert_shortest_path_tests('A', 'C', ['A', 'B', 'C'], ['A', 'B', 'B', 'C'])
 impossible_to_color_graphs.add(test)
 cyclic_graphs.add(test)
@@ -176,7 +199,31 @@ insert_shortest_path_tests('D', 'F', ['D', 'G', 'C', 'F'], ['D', 'E', 'B', 'G', 
 cyclic_graphs.add(test)
 
 
+test = 'nodes vs weight'
 
+build_graphs([('A', 'B', 6), ('A', 'C', 1), ('B', 'D', 9), ('C', 'E', 2), ('D', 'G', 7),
+              ('E', 'F', 1), ('F', 'G', 1)])
+cyclic_graphs.add(test)
+
+
+
+
+results = defaultdict(int)
+
+def pass_():
+    print 'ok'
+    results['pass'] += 1
+
+def skip(message):
+    print 'SKIP: %s' % message
+    results['skip'] += 1
+
+def fail(message):
+    print 'FAIL: %s' % message
+    results['fail'] += 1
+
+
+# coloring
 
 coloring_algorithms = [
     color_graph_brute_force,
@@ -206,11 +253,16 @@ for coloring_algorithm in coloring_algorithms:
             expected_colored = False
 
         if is_graph_legally_colored(graph) == expected_colored:
-            print 'ok'
+            pass_()
             continue
 
-        print 'NOT LEGALLY COLORED'
+        fail('Not legally colored')
 
+
+# weighted directed acyclic
+
+test = 'nodes vs weight'
+insert_shortest_path_tests('A', 'G', ['A', 'C', 'E', 'F', 'G'], ['A', 'B', 'D', 'G'])
 
 topological_ordering_algorithms = [
     TopologicalOrderDfs,
@@ -231,7 +283,7 @@ for topological_ordering_algorithm in topological_ordering_algorithms:
         print '\t%s' % test_name.ljust(20),
 
         if test_name in cyclic_graphs:
-            print 'SKIPPED'
+            skip('Cyclic')
             continue
 
         graph = graph_types['weighted_directed']
@@ -244,16 +296,20 @@ for topological_ordering_algorithm in topological_ordering_algorithms:
             topologically_ordered_nodes = topological_ordering_algorithm(graph)
 
         if not is_topologically_ordered(graph, topologically_ordered_nodes):
-            print 'NOT TOPOLOGICALLY ORDERED'
+            fail('Not topologically sorted')
             continue
 
         if topological_shortest_path(graph, topologically_ordered_nodes, start_node, target_node) != shortest_path:
-            print topological_shortest_path(graph, topologically_ordered_nodes, start_node, target_node), shortest_path
-            print 'NOT SHORTEST PATH'
+            fail('Not shortest path')
             continue
 
         print 'ok'
 
+
+# unweighted undirected cyclic
+
+test = 'nodes vs weight'
+insert_shortest_path_tests('A', 'G', ['A', 'B', 'D', 'G'], ['A', 'C', 'E', 'F', 'G'])
 
 print '\n%s' % 'shortest_path_bfs'
 
@@ -265,9 +321,13 @@ for test_name, graph_types in test_graphs.iteritems():
     start_node, target_node, shortest_path = shortest_paths[test_name][1]
 
     if shortest_path_bfs(graph, start_node, target_node) != shortest_path:
-        print 'NOT SHORTEST PATH'
+        fail('Not shortest path')
         continue
 
-    print 'ok'
+    pass_()
+
+print
+for result in ['pass', 'skip', 'fail']:
+    print result.ljust(6), results[result]
 
 print '\ndone\n'
