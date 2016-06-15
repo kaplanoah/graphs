@@ -86,6 +86,13 @@ build_graphs([])
 insert_shortest_path_tests('A', 'D', [], [])
 
 
+test = 'line'
+
+build_graphs([('A', 'B', 6), ('B', 'C', 9), ('C', 'D', 4), ('D', 'E', 7), ('E', 'F', 4),
+              ('F', 'G', 1)])
+insert_shortest_path_tests('D', 'G', ['D', 'E', 'F', 'G'], [])
+
+
 test = 'leaf'
 
 build_graphs([('A', 'B', 1), ('A', 'C', 4), ('B', 'D', 2), ('C', 'E', 3), ('D', 'F', 7),
@@ -124,7 +131,7 @@ impossible_to_color_graphs.add(test)
 cyclic_graphs.add(test)
 
 
-test = 'complete'
+test = 'complete/nonplanar'
 
 edges = [('D', 'B', 1), ('D', 'C', 1), ('C', 'B', 1)]
 for node in nodes:
@@ -136,14 +143,39 @@ insert_shortest_path_tests('D', 'B', ['D', 'B'], ['D', 'C', 'B'])
 cyclic_graphs.add(test)
 
 
-test = 'wheel'
+test = 'wheel center'
 
 build_graphs([('A', 'B', 1), ('A', 'C', 4), ('A', 'D', 2), ('A', 'E', 6), ('A', 'F', 3),
               ('A', 'G', 3), ('B', 'C', 3), ('C', 'D', 3), ('D', 'E', 5), ('E', 'F', 8),
               ('F', 'G', 8), ('G', 'B', 2)])
 insert_shortest_path_tests('A', 'E', ['A', 'E'], ['A', 'D', 'E'])
+cyclic_graphs.add(test)
+
+
+test = 'wheel outside'
+
+build_graphs([('A', 'B', 1), ('A', 'C', 4), ('A', 'D', 2), ('A', 'E', 6), ('A', 'F', 3),
+              ('A', 'G', 3), ('B', 'C', 3), ('C', 'D', 3), ('D', 'E', 5), ('E', 'F', 8),
+              ('F', 'G', 8), ('G', 'B', 2)])
 insert_shortest_path_tests('F', 'G', ['F', 'G'], ['F', 'A', 'G'])
 cyclic_graphs.add(test)
+
+
+test = 'star'
+
+build_graphs([('A', 'B', 5), ('A', 'C', 6), ('A', 'D', 3), ('A', 'E', 7), ('A', 'F', 1),
+              ('A', 'G', 2)])
+insert_shortest_path_tests('A', 'D', ['A', 'D'], [])
+
+
+test = 'bipartitie'
+
+build_graphs([('A', 'F', 4), ('B', 'E', 2), ('B', 'G', 3), ('C', 'F', 6), ('C', 'G', 3),
+              ('D', 'E', 3), ('D', 'G', 3), ('E', 'B', 3), ('G', 'C', 3), ('G', 'D', 3)])
+insert_shortest_path_tests('D', 'F', ['D', 'G', 'C', 'F'], ['D', 'E', 'B', 'G', 'C', 'F'])
+cyclic_graphs.add(test)
+
+
 
 
 coloring_algorithms = [
