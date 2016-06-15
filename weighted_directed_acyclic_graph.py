@@ -119,6 +119,9 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
                 shortest_path_values[direct_successor]       = current_node_shortest_path_value + edge_weight
                 shortest_path_predecessors[direct_successor] = current_node
 
+    if not shortest_path_predecessors.get(target_node):
+        return []
+
     reverse_shortest_path = []
     current_node = target_node
 

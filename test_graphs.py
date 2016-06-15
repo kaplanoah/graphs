@@ -186,10 +186,10 @@ coloring_algorithms = [
 colors = ['red', 'yellow', 'green', 'blue', 'purple', 'white', 'orange', 'black']
 
 for coloring_algorithm in coloring_algorithms:
-    print coloring_algorithm.__name__
+    print '\n%s' % coloring_algorithm.__name__
 
     for test_name, graph_types in test_graphs.iteritems():
-        print '\t%s' % test_name
+        print '\t%s' % test_name.ljust(20),
 
         graph = graph_types['unweighted_undirected_colored']
 
@@ -205,8 +205,11 @@ for coloring_algorithm in coloring_algorithms:
         if test_name in impossible_to_color_graphs:
             expected_colored = False
 
-        if is_graph_legally_colored(graph) != expected_colored:
-            raise Exception('Not legally colored: %s' % test_name)
+        if is_graph_legally_colored(graph) == expected_colored:
+            print 'ok'
+            continue
+
+        print 'NOT LEGALLY COLORED'
 
 
 topological_ordering_algorithms = [
@@ -222,13 +225,13 @@ def is_topologically_ordered(graph, topologically_ordered_nodes):
     return True
 
 for topological_ordering_algorithm in topological_ordering_algorithms:
-    print topological_ordering_algorithm.__name__
+    print '\n%s' % topological_ordering_algorithm.__name__
 
     for test_name, graph_types in test_graphs.iteritems():
-        print '\t%s' % test_name
+        print '\t%s' % test_name.ljust(20),
 
         if test_name in cyclic_graphs:
-            print '\tSKIPPING'
+            print 'SKIPPED'
             continue
 
         graph = graph_types['weighted_directed']
@@ -241,21 +244,30 @@ for topological_ordering_algorithm in topological_ordering_algorithms:
             topologically_ordered_nodes = topological_ordering_algorithm(graph)
 
         if not is_topologically_ordered(graph, topologically_ordered_nodes):
-            raise Exception('Not topologically ordered: %s' % test_name)
+            print 'NOT TOPOLOGICALLY ORDERED'
+            continue
 
-    if topological_shortest_path(graph, topologically_ordered_nodes, start_node, target_node) != shortest_path:
-        raise Exception('Not shortest path: %s' % test_name)
+        if topological_shortest_path(graph, topologically_ordered_nodes, start_node, target_node) != shortest_path:
+            print topological_shortest_path(graph, topologically_ordered_nodes, start_node, target_node), shortest_path
+            print 'NOT SHORTEST PATH'
+            continue
+
+        print 'ok'
 
 
-print 'shortest_path_bfs'
+print '\n%s' % 'shortest_path_bfs'
 
 for test_name, graph_types in test_graphs.iteritems():
-    print '\t%s' % test_name
+    print '\t%s' % test_name.ljust(20),
 
     graph = graph_types['unweighted_undirected']
 
     start_node, target_node, shortest_path = shortest_paths[test_name][1]
 
     if shortest_path_bfs(graph, start_node, target_node) != shortest_path:
-        print shortest_path_bfs(graph, start_node, target_node), shortest_path
-        raise Exception('Not shortest path: %s' % test_name)
+        print 'NOT SHORTEST PATH'
+        continue
+
+    print 'ok'
+
+print '\ndone\n'
