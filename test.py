@@ -79,64 +79,75 @@ shortest_paths = {}
 
 directed_cyclic_graphs = set()
 
+expected_failures = set()
+
 
 nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
 test = None # test name
 
 
-def insert_shortest_path_tests(start_node, target_node, first_shortest_path, second_shortest_path):
+def add_shortest_path_tests(start_node, target_node, first_shortest_path, second_shortest_path):
     shortest_paths[test] = {
         1: (start_node, target_node, first_shortest_path),
         2: (start_node, target_node, second_shortest_path),
     }
 
+def add_expected_failure(function_name, error_message):
+    expected_failures.add((test, function_name, error_message))
+
+
+test = 'empty graph'
+
+build_graphs([], [])
+add_shortest_path_tests('A', 'B', [], [])
+
 
 test = 'one node'
 
 build_graphs([], ['A'])
-insert_shortest_path_tests('A', 'D', [], [])
+add_shortest_path_tests('A', 'B', [], [])
 
 
 test = 'disconnected'
 
 build_graphs([])
-insert_shortest_path_tests('A', 'D', [], [])
+add_shortest_path_tests('A', 'D', [], [])
 
 
 test = 'line'
 
 build_graphs([('A', 'B', 6), ('B', 'C', 9), ('C', 'D', 4), ('D', 'E', 7), ('E', 'F', 4),
               ('F', 'G', 1)])
-insert_shortest_path_tests('D', 'G', ['D', 'E', 'F', 'G'], [])
+add_shortest_path_tests('D', 'G', ['D', 'E', 'F', 'G'], [])
 
 
 test = 'leaf'
 
 build_graphs([('A', 'B', 1), ('A', 'C', 4), ('B', 'D', 2), ('C', 'E', 3), ('D', 'F', 7),
               ('E', 'G', 1)])
-insert_shortest_path_tests('A', 'D', ['A', 'B', 'D'], [])
+add_shortest_path_tests('A', 'D', ['A', 'B', 'D'], [])
 
 
 test = 'tree'
 
 build_graphs([('A', 'B', 2), ('A', 'C', 9), ('B', 'D', 3), ('B', 'E', 1), ('C', 'F', 4),
               ('E', 'G', 2)])
-insert_shortest_path_tests('A', 'G', ['A', 'B', 'E', 'G'], [])
+add_shortest_path_tests('A', 'G', ['A', 'B', 'E', 'G'], [])
 
 
 test = 'negative edges'
 
 build_graphs([('A', 'B', -3), ('A', 'C', -1), ('B', 'D', -5), ('B', 'E', -4), ('C', 'F', -2),
               ('E', 'G', -6), ('F', 'E', -1)])
-insert_shortest_path_tests('A', 'G', ['A', 'B', 'E', 'G'], ['A', 'C', 'D', 'E', 'G'])
+add_shortest_path_tests('A', 'G', ['A', 'B', 'E', 'G'], ['A', 'C', 'D', 'E', 'G'])
 
 
 test = 'cycle'
 
 build_graphs([('A', 'B', 6), ('B', 'C', 9), ('C', 'D', 4), ('D', 'E', 7), ('E', 'F', 4),
               ('F', 'G', 1), ('G', 'A', 9)])
-insert_shortest_path_tests('B', 'D', ['B', 'C', 'D'], [])
+add_shortest_path_tests('B', 'D', ['B', 'C', 'D'], [])
 directed_cyclic_graphs.add(test)
 
 
@@ -144,7 +155,7 @@ test = 'cyclic'
 
 build_graphs([('A', 'B', 1), ('A', 'C', 3), ('A', 'D', 7), ('B', 'C', 3), ('C', 'A', 9),
               ('D', 'E', 4), ('D', 'F', 5), ('E', 'F', 3), ('F', 'E', 2), ('F', 'G', 9)])
-insert_shortest_path_tests('A', 'F', ['A', 'D', 'F'], ['A', 'D', 'E', 'F'])
+add_shortest_path_tests('A', 'F', ['A', 'D', 'F'], ['A', 'D', 'E', 'F'])
 directed_cyclic_graphs.add(test)
 
 
@@ -152,22 +163,26 @@ test = 'negative cyclic'
 
 build_graphs([('A', 'B', -1), ('A', 'C', -3), ('A', 'D', -7), ('B', 'C', -3), ('C', 'A', -9),
               ('D', 'E', -4), ('D', 'F', -9), ('E', 'F', -3), ('F', 'E', -2), ('F', 'G', -9)])
-insert_shortest_path_tests('A', 'F', ['A', 'D', 'F'], ['A', 'D', 'E', 'F'])
+add_shortest_path_tests('A', 'F', ['A', 'D', 'F'], ['A', 'D', 'E', 'F'])
 directed_cyclic_graphs.add(test)
 
 
 test = 'loop'
 
 build_graphs([('A', 'B', 4), ('B', 'B', 5), ('B', 'C', 9)])
-insert_shortest_path_tests('A', 'C', ['A', 'B', 'C'], ['A', 'B', 'B', 'C'])
+add_shortest_path_tests('A', 'C', ['A', 'B', 'C'], ['A', 'B', 'B', 'C'])
 directed_cyclic_graphs.add(test)
+add_expected_failure('color_graph_brute_force', 'Legal coloring impossible')
+add_expected_failure('color_graph_greedy', 'Legal coloring impossible for node with loop')
 
 
 test = 'negative loop'
 
 build_graphs([('A', 'B', 4), ('B', 'B', -3), ('B', 'C', 9)])
-insert_shortest_path_tests('A', 'C', ['A', 'B', 'C'], ['A', 'B', 'B', 'C'])
+add_shortest_path_tests('A', 'C', ['A', 'B', 'C'], ['A', 'B', 'B', 'C'])
 directed_cyclic_graphs.add(test)
+add_expected_failure('color_graph_brute_force', 'Legal coloring impossible')
+add_expected_failure('color_graph_greedy', 'Legal coloring impossible for node with loop')
 
 
 test = 'complete/nonplanar'
@@ -178,7 +193,7 @@ for node in nodes:
         if (node != neighbor) and ((node, neighbor) not in [('D', 'B'), ('D', 'C'), ('C', 'B')]):
             edges.append((node, neighbor, random.randint(3, 9)))
 build_graphs(edges)
-insert_shortest_path_tests('D', 'B', ['D', 'B'], ['D', 'C', 'B'])
+add_shortest_path_tests('D', 'B', ['D', 'B'], ['D', 'C', 'B'])
 directed_cyclic_graphs.add(test)
 
 
@@ -187,7 +202,7 @@ test = 'wheel center'
 build_graphs([('A', 'B', 1), ('A', 'C', 4), ('A', 'D', 2), ('A', 'E', 6), ('A', 'F', 3),
               ('A', 'G', 3), ('B', 'C', 3), ('C', 'D', 3), ('D', 'E', 5), ('E', 'F', 8),
               ('F', 'G', 8), ('G', 'B', 2)])
-insert_shortest_path_tests('A', 'E', ['A', 'E'], ['A', 'D', 'E'])
+add_shortest_path_tests('A', 'E', ['A', 'E'], ['A', 'D', 'E'])
 directed_cyclic_graphs.add(test)
 
 
@@ -196,7 +211,7 @@ test = 'wheel outside'
 build_graphs([('A', 'B', 1), ('A', 'C', 4), ('A', 'D', 2), ('A', 'E', 6), ('A', 'F', 3),
               ('A', 'G', 3), ('B', 'C', 3), ('C', 'D', 3), ('D', 'E', 5), ('E', 'F', 8),
               ('F', 'G', 8), ('G', 'B', 2)])
-insert_shortest_path_tests('F', 'G', ['F', 'G'], ['F', 'A', 'G'])
+add_shortest_path_tests('F', 'G', ['F', 'G'], ['F', 'A', 'G'])
 directed_cyclic_graphs.add(test)
 
 
@@ -204,14 +219,14 @@ test = 'star'
 
 build_graphs([('A', 'B', 5), ('A', 'C', 6), ('A', 'D', 3), ('A', 'E', 7), ('A', 'F', 1),
               ('A', 'G', 2)])
-insert_shortest_path_tests('A', 'D', ['A', 'D'], [])
+add_shortest_path_tests('A', 'D', ['A', 'D'], [])
 
 
 test = 'bipartite'
 
 build_graphs([('A', 'F', 4), ('B', 'E', 2), ('B', 'G', 3), ('C', 'F', 6), ('C', 'G', 3),
               ('D', 'E', 3), ('D', 'G', 3), ('E', 'B', 3), ('G', 'C', 3), ('G', 'D', 3)])
-insert_shortest_path_tests('D', 'F', ['D', 'G', 'C', 'F'], ['D', 'E', 'B', 'G', 'C', 'F'])
+add_shortest_path_tests('D', 'F', ['D', 'G', 'C', 'F'], ['D', 'E', 'B', 'G', 'C', 'F'])
 directed_cyclic_graphs.add(test)
 
 
@@ -231,7 +246,7 @@ test = 'multiple edges'
 
 build_graphs([('A', 'B', 4), ('A', 'C', 1), ('A', 'C', 5), ('B', 'D', 7), ('C', 'F', 7),
               ('F', 'G', 1), ('F', 'G', 4)])
-insert_shortest_path_tests('A', 'G', ['A', 'C', 'F', 'G'], ['A', 'C', 'F', 'G'])
+add_shortest_path_tests('A', 'G', ['A', 'C', 'F', 'G'], ['A', 'C', 'F', 'G'])
 
 
 test = 'a'
@@ -239,7 +254,7 @@ test = 'a'
 build_graphs([('A', 'B', 3), ('A', 'D', 2), ('B', 'A', 1), ('B', 'C', 2), ('B', 'D', 4),
               ('C', 'E', 5), ('C', 'F', 9), ('D', 'A', 2)],
              ['A', 'B', 'C', 'D', 'E', 'F'])
-insert_shortest_path_tests('B', 'A', ['B', 'A'], ['B', 'D', 'A'])
+add_shortest_path_tests('B', 'A', ['B', 'A'], ['B', 'D', 'A'])
 directed_cyclic_graphs.add(test)
 
 
@@ -248,7 +263,7 @@ test = 'b'
 build_graphs([('A', 'B', 1), ('A', 'C', 4), ('A', 'F', 4), ('B', 'E', 9), ('D', 'C', 6),
               ('D', 'E', 8), ('D', 'F', 7), ('D', 'G', 4), ('F', 'C', 2), ('G', 'A', 1),
               ('G', 'E', 3)])
-insert_shortest_path_tests('A', 'C', ['A', 'C'], ['A', 'F', 'C'])
+add_shortest_path_tests('A', 'C', ['A', 'C'], ['A', 'F', 'C'])
 
 
 test = 'c'
@@ -259,7 +274,7 @@ build_graphs([('A', 'B', 1), ('A', 'C', 1), ('A', 'D', 1), ('B', 'A', 1), ('B', 
               ('G', 'D', 1), ('G', 'I', 1), ('H', 'E', 1), ('H', 'I', 1), ('I', 'F', 1),
               ('I', 'G', 1), ('I', 'H', 1)],
              ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'])
-insert_shortest_path_tests('A', 'G', ['A', 'D', 'G'], ['A', 'D', 'F', 'I', 'G'])
+add_shortest_path_tests('A', 'G', ['A', 'D', 'G'], ['A', 'D', 'F', 'I', 'G'])
 directed_cyclic_graphs.add(test)
 
 
@@ -301,7 +316,24 @@ for coloring_algorithm in coloring_algorithms:
         for node in graph:
             node.color = None
 
-        coloring_algorithm(graph, d_plus_one_colors)
+        expected_failure = None
+        for failure in expected_failures:
+            if (test_name, coloring_algorithm.__name__) == failure[0:2]:
+                expected_failure = failure
+
+        try:
+            coloring_algorithm(graph, d_plus_one_colors)
+        except Exception as e:
+            if expected_failure and expected_failure[2] in e.message:
+                pass_()
+                continue
+            else:
+                fail(e.message)
+                continue
+        else:
+            if expected_failure:
+                fail('Failed to raise error: %s' % expected_failure[2])
+                continue
 
         if not is_graph_legally_colored(graph):
             fail('Not legally colored')
@@ -313,10 +345,10 @@ for coloring_algorithm in coloring_algorithms:
 # weighted directed acyclic
 
 test = 'nodes vs weight'
-insert_shortest_path_tests('A', 'G', ['A', 'C', 'E', 'F', 'G'], ['A', 'B', 'D', 'G'])
+add_shortest_path_tests('A', 'G', ['A', 'C', 'E', 'F', 'G'], ['A', 'B', 'D', 'G'])
 
 test = 'no directed path'
-insert_shortest_path_tests('C', 'A', [], [])
+add_shortest_path_tests('C', 'A', [], [])
 
 topological_ordering_algorithms = [
     TopologicalOrderDfs,
@@ -365,10 +397,10 @@ for topological_ordering_algorithm in topological_ordering_algorithms:
 # unweighted undirected cyclic
 
 test = 'nodes vs weight'
-insert_shortest_path_tests('A', 'G', ['A', 'B', 'D', 'G'], ['A', 'C', 'E', 'F', 'G'])
+add_shortest_path_tests('A', 'G', ['A', 'B', 'D', 'G'], ['A', 'C', 'E', 'F', 'G'])
 
 test = 'no directed path'
-insert_shortest_path_tests('C', 'A', ['C', 'B', 'A'], [])
+add_shortest_path_tests('C', 'A', ['C', 'B', 'A'], [])
 
 print '\n%s' % 'shortest_path_bfs'
 

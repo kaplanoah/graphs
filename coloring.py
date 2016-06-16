@@ -36,7 +36,11 @@ def color_graph_brute_force(graph, colors):
             node.color = current_coloring[index]
 
         if is_graph_legally_colored(graph):
-            break
+            return
+
+    if not is_graph_legally_colored(graph):
+        raise Exception('Legal coloring impossible')
+
 
 def is_graph_legally_colored(graph):
 
@@ -63,6 +67,9 @@ def color_graph_greedy(graph, colors):
 
     for node in graph:
 
+        if node in node.neighbors:
+            raise Exception('Legal coloring impossible for node with loop: %s' % node.label)
+
         illegal_colors = set([neighbor.color for neighbor in node.neighbors if neighbor.color])
 
         for color in colors:
@@ -85,5 +92,4 @@ def color_graph_greedy(graph, colors):
 # backtracking (not needed because we know D+1 colors work)
 #
 # edge cases
-#     0 nodes in graph
 #     loop
