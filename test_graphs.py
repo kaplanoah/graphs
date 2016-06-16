@@ -10,8 +10,8 @@ def build_weighted_directed_graph(nodes, edges):
 
     graph = {node: [] for node in nodes}
 
-    for predecessor, successor, weight in edges:
-        graph[predecessor].append((successor, weight))
+    for direct_predecessor, direct_successor, weight in edges:
+        graph[direct_predecessor].append((direct_successor, weight))
 
     return graph
 
@@ -60,7 +60,7 @@ shortest_paths = {}
 
 impossible_to_color_graphs = set()
 
-cyclic_graphs = set()
+directed_cyclic_graphs = set()
 
 
 nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
@@ -119,7 +119,7 @@ test = 'cycle'
 build_graphs([('A', 'B', 6), ('B', 'C', 9), ('C', 'D', 4), ('D', 'E', 7), ('E', 'F', 4),
               ('F', 'G', 1), ('G', 'A', 9)])
 insert_shortest_path_tests('B', 'D', ['B', 'C', 'D'], [])
-cyclic_graphs.add(test)
+directed_cyclic_graphs.add(test)
 
 
 test = 'cyclic'
@@ -127,7 +127,7 @@ test = 'cyclic'
 build_graphs([('A', 'B', 1), ('A', 'C', 3), ('A', 'D', 7), ('B', 'C', 3), ('C', 'A', 9),
               ('D', 'E', 4), ('D', 'F', 5), ('E', 'F', 3), ('F', 'E', 2), ('F', 'G', 9)])
 insert_shortest_path_tests('A', 'F', ['A', 'D', 'F'], ['A', 'D', 'E', 'F'])
-cyclic_graphs.add(test)
+directed_cyclic_graphs.add(test)
 
 
 test = 'negative cyclic'
@@ -135,7 +135,7 @@ test = 'negative cyclic'
 build_graphs([('A', 'B', -1), ('A', 'C', -3), ('A', 'D', -7), ('B', 'C', -3), ('C', 'A', -9),
               ('D', 'E', -4), ('D', 'F', -9), ('E', 'F', -3), ('F', 'E', -2), ('F', 'G', -9)])
 insert_shortest_path_tests('A', 'F', ['A', 'D', 'F'], ['A', 'D', 'E', 'F'])
-cyclic_graphs.add(test)
+directed_cyclic_graphs.add(test)
 
 
 test = 'loop'
@@ -143,7 +143,7 @@ test = 'loop'
 build_graphs([('A', 'B', 4), ('B', 'B', 5), ('B', 'C', 9)])
 insert_shortest_path_tests('A', 'C', ['A', 'B', 'C'], ['A', 'B', 'B', 'C'])
 impossible_to_color_graphs.add(test)
-cyclic_graphs.add(test)
+directed_cyclic_graphs.add(test)
 
 
 test = 'negative loop'
@@ -151,7 +151,7 @@ test = 'negative loop'
 build_graphs([('A', 'B', 4), ('B', 'B', -3), ('B', 'C', 9)])
 insert_shortest_path_tests('A', 'C', ['A', 'B', 'C'], ['A', 'B', 'B', 'C'])
 impossible_to_color_graphs.add(test)
-cyclic_graphs.add(test)
+directed_cyclic_graphs.add(test)
 
 
 test = 'complete/nonplanar'
@@ -163,7 +163,7 @@ for node in nodes:
             edges.append((node, neighbor, random.randint(3, 9)))
 build_graphs(edges)
 insert_shortest_path_tests('D', 'B', ['D', 'B'], ['D', 'C', 'B'])
-cyclic_graphs.add(test)
+directed_cyclic_graphs.add(test)
 
 
 test = 'wheel center'
@@ -172,7 +172,7 @@ build_graphs([('A', 'B', 1), ('A', 'C', 4), ('A', 'D', 2), ('A', 'E', 6), ('A', 
               ('A', 'G', 3), ('B', 'C', 3), ('C', 'D', 3), ('D', 'E', 5), ('E', 'F', 8),
               ('F', 'G', 8), ('G', 'B', 2)])
 insert_shortest_path_tests('A', 'E', ['A', 'E'], ['A', 'D', 'E'])
-cyclic_graphs.add(test)
+directed_cyclic_graphs.add(test)
 
 
 test = 'wheel outside'
@@ -181,7 +181,7 @@ build_graphs([('A', 'B', 1), ('A', 'C', 4), ('A', 'D', 2), ('A', 'E', 6), ('A', 
               ('A', 'G', 3), ('B', 'C', 3), ('C', 'D', 3), ('D', 'E', 5), ('E', 'F', 8),
               ('F', 'G', 8), ('G', 'B', 2)])
 insert_shortest_path_tests('F', 'G', ['F', 'G'], ['F', 'A', 'G'])
-cyclic_graphs.add(test)
+directed_cyclic_graphs.add(test)
 
 
 test = 'star'
@@ -191,34 +191,39 @@ build_graphs([('A', 'B', 5), ('A', 'C', 6), ('A', 'D', 3), ('A', 'E', 7), ('A', 
 insert_shortest_path_tests('A', 'D', ['A', 'D'], [])
 
 
-test = 'bipartitie'
+test = 'bipartite'
 
 build_graphs([('A', 'F', 4), ('B', 'E', 2), ('B', 'G', 3), ('C', 'F', 6), ('C', 'G', 3),
               ('D', 'E', 3), ('D', 'G', 3), ('E', 'B', 3), ('G', 'C', 3), ('G', 'D', 3)])
 insert_shortest_path_tests('D', 'F', ['D', 'G', 'C', 'F'], ['D', 'E', 'B', 'G', 'C', 'F'])
-cyclic_graphs.add(test)
+directed_cyclic_graphs.add(test)
 
 
 test = 'nodes vs weight'
 
 build_graphs([('A', 'B', 6), ('A', 'C', 1), ('B', 'D', 9), ('C', 'E', 2), ('D', 'G', 7),
               ('E', 'F', 1), ('F', 'G', 1)])
-cyclic_graphs.add(test)
+insert_shortest_path_tests('A', 'G', ['A', 'C', 'F', 'G'], ['A', 'C', 'F', 'G'])
+
+
+test = 'multiple edges'
+
+build_graphs([('A', 'B', 4), ('A', 'C', 1), ('A', 'C', 5), ('B', 'D', 7), ('C', 'F', 7),
+              ('F', 'G', 1), ('F', 'G', 4)])
+insert_shortest_path_tests('A', 'G', ['A', 'C', 'F', 'G'], ['A', 'C', 'F', 'G'])
 
 
 
 
 results = defaultdict(int)
 
-def pass_():
-    print 'ok'
+def pass_(cyclic=False):
+    print 'ok' if not cyclic else 'ok (cyclic)'
     results['pass'] += 1
 
-def skip(message):
-    print 'SKIP: %s' % message
-    results['skip'] += 1
-
-def fail(message):
+def fail(message, cyclic=False):
+    if cyclic:
+        message = '%s (cyclic)' % message
     print 'FAIL: %s' % message
     results['fail'] += 1
 
@@ -235,7 +240,7 @@ colors = ['red', 'yellow', 'green', 'blue', 'purple', 'white', 'orange', 'black'
 for coloring_algorithm in coloring_algorithms:
     print '\n%s' % coloring_algorithm.__name__
 
-    for test_name, graph_types in test_graphs.iteritems():
+    for test_name, graph_types in iter(sorted(test_graphs.iteritems())):
         print '\t%s' % test_name.ljust(20),
 
         graph = graph_types['unweighted_undirected_colored']
@@ -252,11 +257,11 @@ for coloring_algorithm in coloring_algorithms:
         if test_name in impossible_to_color_graphs:
             expected_colored = False
 
-        if is_graph_legally_colored(graph) == expected_colored:
-            pass_()
+        if is_graph_legally_colored(graph) != expected_colored:
+            fail('Not legally colored')
             continue
 
-        fail('Not legally colored')
+        pass_()
 
 
 # weighted directed acyclic
@@ -272,19 +277,18 @@ topological_ordering_algorithms = [
 def is_topologically_ordered(graph, topologically_ordered_nodes):
     for node, direct_successors in graph.iteritems():
         for direct_successor, edge_weight in direct_successors:
-            if topologically_ordered_nodes.index(node) > topologically_ordered_nodes.index(direct_successor):
+            try:
+                if topologically_ordered_nodes.index(node) > topologically_ordered_nodes.index(direct_successor):
+                    return False
+            except ValueError:
                 return False
     return True
 
 for topological_ordering_algorithm in topological_ordering_algorithms:
     print '\n%s' % topological_ordering_algorithm.__name__
 
-    for test_name, graph_types in test_graphs.iteritems():
+    for test_name, graph_types in iter(sorted(test_graphs.iteritems())):
         print '\t%s' % test_name.ljust(20),
-
-        if test_name in cyclic_graphs:
-            skip('Cyclic')
-            continue
 
         graph = graph_types['weighted_directed']
 
@@ -294,16 +298,19 @@ for topological_ordering_algorithm in topological_ordering_algorithms:
             topologically_ordered_nodes = topological_ordering_algorithm(graph).order_graph()
         except AttributeError:
             topologically_ordered_nodes = topological_ordering_algorithm(graph)
+        except RuntimeError:
+            fail('RuntimeError', test_name in directed_cyclic_graphs)
+            continue
 
         if not is_topologically_ordered(graph, topologically_ordered_nodes):
-            fail('Not topologically sorted')
+            fail('Not topologically sorted', test_name in directed_cyclic_graphs)
             continue
 
         if topological_shortest_path(graph, topologically_ordered_nodes, start_node, target_node) != shortest_path:
-            fail('Not shortest path')
+            fail('Not shortest path', test_name in directed_cyclic_graphs)
             continue
 
-        print 'ok'
+        pass_(cyclic=test_name in directed_cyclic_graphs)
 
 
 # unweighted undirected cyclic
@@ -313,7 +320,7 @@ insert_shortest_path_tests('A', 'G', ['A', 'B', 'D', 'G'], ['A', 'C', 'E', 'F', 
 
 print '\n%s' % 'shortest_path_bfs'
 
-for test_name, graph_types in test_graphs.iteritems():
+for test_name, graph_types in iter(sorted(test_graphs.iteritems())):
     print '\t%s' % test_name.ljust(20),
 
     graph = graph_types['unweighted_undirected']
@@ -321,13 +328,40 @@ for test_name, graph_types in test_graphs.iteritems():
     start_node, target_node, shortest_path = shortest_paths[test_name][1]
 
     if shortest_path_bfs(graph, start_node, target_node) != shortest_path:
+        print shortest_path_bfs(graph, start_node, target_node), shortest_path
         fail('Not shortest path')
         continue
 
     pass_()
 
 print
-for result in ['pass', 'skip', 'fail']:
+for result in ['pass', 'fail']:
     print result.ljust(6), results[result]
+
+
+print '\nduplicate edges'
+
+for graph_type in ['weighted_directed', 'unweighted_undirected', 'unweighted_undirected_colored']:
+
+    print '\t%s' % graph_type.replace('_', ' ')
+
+    for test_name, graph_types in test_graphs.iteritems():
+        test_graph = graph_types[graph_type]
+
+        for node in test_graph:
+
+            if graph_type == 'weighted_directed':
+                out_neighbors_list = [node_label for node_label, edge_weight in test_graph[node]]
+
+            if graph_type == 'unweighted_undirected':
+                out_neighbors_list = test_graph[node]
+
+            if graph_type == 'unweighted_undirected_colored':
+                out_neighbors_list = [neighbor.label for neighbor in node.neighbors]
+                node = node.label
+
+            if len(out_neighbors_list) != len(set(out_neighbors_list)):
+                print '\t\t%s' % test_name.ljust(20), node,
+                print out_neighbors_list
 
 print '\ndone\n'
