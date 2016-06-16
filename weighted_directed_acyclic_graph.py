@@ -138,3 +138,11 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 # negative cycles
 # disconnected graphs
 # reverse list (or insert at beginning) operations
+# edge cases:
+#     less than 2 nodes in graph
+#     start node and target node are the same
+#     start node or target node aren't in graph
+#     invalid graph (cyclic, loop)
+#     disconnected, negative edges, multiple edges
+#     no path (disconnected or wrong directions)
+#     only 1 path (no second shortest path)

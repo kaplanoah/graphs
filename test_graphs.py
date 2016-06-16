@@ -60,9 +60,10 @@ def get_edge_count(node_a, node_b, edges):
     return max(a_b_count, b_a_count)
 
 
-def build_graphs(edges):
+def build_graphs(edges, input_nodes=None):
+    graph_nodes = input_nodes or nodes
     for graph_type, build_graph_type in graph_types.iteritems():
-        test_graphs[test][graph_type] = build_graph_type(nodes, edges)
+        test_graphs[test][graph_type] = build_graph_type(graph_nodes, edges)
 
 
 graph_types = {
@@ -91,6 +92,12 @@ def insert_shortest_path_tests(start_node, target_node, first_shortest_path, sec
         1: (start_node, target_node, first_shortest_path),
         2: (start_node, target_node, second_shortest_path),
     }
+
+
+test = 'one node'
+
+build_graphs([], ['A'])
+insert_shortest_path_tests('A', 'D', [], [])
 
 
 test = 'disconnected'
@@ -224,6 +231,35 @@ test = 'multiple edges'
 build_graphs([('A', 'B', 4), ('A', 'C', 1), ('A', 'C', 5), ('B', 'D', 7), ('C', 'F', 7),
               ('F', 'G', 1), ('F', 'G', 4)])
 insert_shortest_path_tests('A', 'G', ['A', 'C', 'F', 'G'], ['A', 'C', 'F', 'G'])
+
+
+test = 'a'
+
+build_graphs([('A', 'B', 3), ('A', 'D', 2), ('B', 'A', 1), ('B', 'C', 2), ('B', 'D', 4),
+              ('C', 'E', 5), ('C', 'F', 9), ('D', 'A', 2)],
+             ['A', 'B', 'C', 'D', 'E', 'F'])
+insert_shortest_path_tests('B', 'A', ['B', 'A'], ['B', 'D', 'A'])
+directed_cyclic_graphs.add(test)
+
+
+test = 'b'
+
+build_graphs([('A', 'B', 1), ('A', 'C', 4), ('A', 'F', 4), ('B', 'E', 9), ('D', 'C', 6),
+              ('D', 'E', 8), ('D', 'F', 7), ('D', 'G', 4), ('F', 'C', 2), ('G', 'A', 1),
+              ('G', 'E', 3)])
+insert_shortest_path_tests('A', 'C', ['A', 'C'], ['A', 'F', 'C'])
+
+
+test = 'c'
+
+build_graphs([('A', 'B', 1), ('A', 'C', 1), ('A', 'D', 1), ('B', 'A', 1), ('B', 'C', 1),
+              ('C', 'A', 1), ('C', 'B', 1), ('C', 'E', 1), ('D', 'A', 1), ('D', 'F', 1),
+              ('D', 'G', 1), ('E', 'C', 1), ('E', 'H', 1), ('F', 'D', 1), ('F', 'I', 1),
+              ('G', 'D', 1), ('G', 'I', 1), ('H', 'E', 1), ('H', 'I', 1), ('I', 'F', 1),
+              ('I', 'G', 1), ('I', 'H', 1)],
+             ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I'])
+insert_shortest_path_tests('A', 'G', ['A', 'D', 'G'], ['A', 'D', 'F', 'I', 'G'])
+directed_cyclic_graphs.add(test)
 
 
 

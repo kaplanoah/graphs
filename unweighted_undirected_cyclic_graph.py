@@ -68,3 +68,10 @@ def shortest_path_bfs(graph, start_node, target_node):
 # disconnected graphs
 # reverse list (or insert at beginning) operations
 # O(B^D) runtime
+# edge cases:
+#     less than 2 nodes in graph
+#     start node and target node are the same
+#     start node or target node aren't in graph
+#     multiple edges, loops
+#     no path (disconnected)
+#     only 1 path (no second shortest path)
