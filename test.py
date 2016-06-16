@@ -77,8 +77,6 @@ test_graphs = defaultdict(dict)
 
 shortest_paths = {}
 
-impossible_to_color_graphs = set()
-
 directed_cyclic_graphs = set()
 
 
@@ -162,7 +160,6 @@ test = 'loop'
 
 build_graphs([('A', 'B', 4), ('B', 'B', 5), ('B', 'C', 9)])
 insert_shortest_path_tests('A', 'C', ['A', 'B', 'C'], ['A', 'B', 'B', 'C'])
-impossible_to_color_graphs.add(test)
 directed_cyclic_graphs.add(test)
 
 
@@ -170,7 +167,6 @@ test = 'negative loop'
 
 build_graphs([('A', 'B', 4), ('B', 'B', -3), ('B', 'C', 9)])
 insert_shortest_path_tests('A', 'C', ['A', 'B', 'C'], ['A', 'B', 'B', 'C'])
-impossible_to_color_graphs.add(test)
 directed_cyclic_graphs.add(test)
 
 
@@ -307,11 +303,7 @@ for coloring_algorithm in coloring_algorithms:
 
         coloring_algorithm(graph, d_plus_one_colors)
 
-        expected_colored = True
-        if test_name in impossible_to_color_graphs:
-            expected_colored = False
-
-        if is_graph_legally_colored(graph) != expected_colored:
+        if not is_graph_legally_colored(graph):
             fail('Not legally colored')
             continue
 
@@ -388,7 +380,6 @@ for test_name, graph_types in iter(sorted(test_graphs.iteritems())):
     start_node, target_node, shortest_path = shortest_paths[test_name][1]
 
     if shortest_path_bfs(graph, start_node, target_node) != shortest_path:
-        print shortest_path_bfs(graph, start_node, target_node), shortest_path
         fail('Not shortest path')
         continue
 
