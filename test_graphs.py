@@ -22,7 +22,8 @@ def build_unweighted_undirected_graph(nodes, edges):
 
     for node_1, node_2, weight in edges:
         for node_a, node_b in ((node_1, node_2), (node_2, node_1)):
-            if node_b not in graph[node_a]:
+            edge_count = get_edge_count(node_a, node_b, edges)
+            while graph[node_a].count(node_b) < edge_count:
                 graph[node_a].append(node_b)
 
     return graph
@@ -41,10 +42,27 @@ def build_unweighted_undirected_colored_graph(labels, edges):
                 if node.label == label_b:
                     in_node = node
 
-            if in_node not in out_node.neighbors:
+            edge_count = get_edge_count(in_node.label, out_node.label, edges)
+            while out_node.neighbors.count(in_node) < edge_count:
                 out_node.neighbors.append(in_node)
 
     return graph
+
+
+def get_edge_count(node_a, node_b, edges):
+    a_b_count = 0
+    b_a_count = 0
+    for node_1, node_2, weight in edges:
+        if (node_1, node_2) == (node_a, node_b):
+            a_b_count += 1
+        if (node_2, node_1) == (node_a, node_b):
+            b_a_count += 1
+    return max(a_b_count, b_a_count)
+
+
+def build_graphs(edges):
+    for graph_type, build_graph_type in graph_types.iteritems():
+        test_graphs[test][graph_type] = build_graph_type(nodes, edges)
 
 
 graph_types = {
@@ -66,11 +84,6 @@ directed_cyclic_graphs = set()
 nodes = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 
 test = None # test name
-
-
-def build_graphs(edges):
-    for graph_type, build_graph_type in graph_types.iteritems():
-        test_graphs[test][graph_type] = build_graph_type(nodes, edges)
 
 
 def insert_shortest_path_tests(start_node, target_node, first_shortest_path, second_shortest_path):
@@ -337,31 +350,5 @@ for test_name, graph_types in iter(sorted(test_graphs.iteritems())):
 print
 for result in ['pass', 'fail']:
     print result.ljust(6), results[result]
-
-
-print '\nduplicate edges'
-
-for graph_type in ['weighted_directed', 'unweighted_undirected', 'unweighted_undirected_colored']:
-
-    print '\t%s' % graph_type.replace('_', ' ')
-
-    for test_name, graph_types in test_graphs.iteritems():
-        test_graph = graph_types[graph_type]
-
-        for node in test_graph:
-
-            if graph_type == 'weighted_directed':
-                out_neighbors_list = [node_label for node_label, edge_weight in test_graph[node]]
-
-            if graph_type == 'unweighted_undirected':
-                out_neighbors_list = test_graph[node]
-
-            if graph_type == 'unweighted_undirected_colored':
-                out_neighbors_list = [neighbor.label for neighbor in node.neighbors]
-                node = node.label
-
-            if len(out_neighbors_list) != len(set(out_neighbors_list)):
-                print '\t\t%s' % test_name.ljust(20), node,
-                print out_neighbors_list
 
 print '\ndone\n'
