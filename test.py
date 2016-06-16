@@ -223,7 +223,12 @@ test = 'nodes vs weight'
 
 build_graphs([('A', 'B', 6), ('A', 'C', 1), ('B', 'D', 9), ('C', 'E', 2), ('D', 'G', 7),
               ('E', 'F', 1), ('F', 'G', 1)])
-insert_shortest_path_tests('A', 'G', ['A', 'C', 'F', 'G'], ['A', 'C', 'F', 'G'])
+
+
+test = 'no directed path'
+
+build_graphs([('A', 'B', 6), ('B', 'C', 9), ('C', 'D', 4), ('D', 'E', 7), ('E', 'F', 4),
+              ('F', 'G', 1)])
 
 
 test = 'multiple edges'
@@ -318,6 +323,9 @@ for coloring_algorithm in coloring_algorithms:
 test = 'nodes vs weight'
 insert_shortest_path_tests('A', 'G', ['A', 'C', 'E', 'F', 'G'], ['A', 'B', 'D', 'G'])
 
+test = 'no directed path'
+insert_shortest_path_tests('C', 'A', [], [])
+
 topological_ordering_algorithms = [
     TopologicalOrderDfs,
     topological_order_kahns,
@@ -366,6 +374,9 @@ for topological_ordering_algorithm in topological_ordering_algorithms:
 
 test = 'nodes vs weight'
 insert_shortest_path_tests('A', 'G', ['A', 'B', 'D', 'G'], ['A', 'C', 'E', 'F', 'G'])
+
+test = 'no directed path'
+insert_shortest_path_tests('C', 'A', ['C', 'B', 'A'], [])
 
 print '\n%s' % 'shortest_path_bfs'
 

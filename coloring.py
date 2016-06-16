@@ -1,5 +1,5 @@
-# legally color a simple graph (undirected, no multiple edges or loops)
-# use D+1 or less colors, where D is the maximum degree
+# legally color an unweighted, undirected graph using
+# D+1 or fewer colors, where D is the maximum degree
 
 
 # nodes are represented by a list of node objects that have a label,
@@ -20,6 +20,7 @@ class Node:
 # time:   O(C^N * N+M)  where C is the number of colors and N is the number of nodes. this is
 #                       effectively O(N^N) in a graph where one node connects to all other nodes
 #                       because D would be N-1 and C is defined as D+1
+#                       except for multiple edges
 # space:  O(1)          itertools.product is an iterator
 
 import itertools
@@ -82,3 +83,7 @@ def color_graph_greedy(graph, colors):
 #     high saturation (most unique neighbor colors)
 #
 # backtracking (not needed because we know D+1 colors work)
+#
+# edge cases
+#     0 nodes in graph
+#     loop
