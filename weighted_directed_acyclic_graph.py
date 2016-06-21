@@ -1,5 +1,5 @@
-# find the second shortest path from a start node to a target
-# node in a weighted, directed, acyclic graph
+# find the second shortest path from a start node to a
+# target node in a weighted, directed, acyclic graph
 
 
 # nodes are represented by a dictionary of (string, list) pairs where the string
@@ -16,10 +16,10 @@ graph = {
 
 # topological ordering overview
 
-# if we can order the nodes so every node comes after all its predecessors, we can iterate over
-# the nodes in one pass from the start node to the target node and track the shortest path so
-# far to each node's direct successors. this ordering is possible because the graph is directed
-# and acyclic
+# if we can order the nodes so every node comes after all its predecessors, we can iterate
+# over the nodes in one pass from the start node to the target node and track the shortest
+# path so far to each node's direct successors. this ordering is possible because the
+# graph is directed and acyclic
 
 
 # topological ordering (dfs)
@@ -39,7 +39,8 @@ class TopologicalOrderDfs:
 
     def order_graph(self):
 
-        # initialize a list to hold the ordered nodes
+        # initialize a list to hold the ordered nodes and a
+        # set to track which nodes we've already added
         self.reverse_topologically_ordered_nodes = []
         self.added_nodes = set()
 
@@ -80,7 +81,7 @@ def topological_order_kahns(graph):
     topologically_ordered_nodes = []
 
     # initialize a dictionary to track the number of incoming edges to
-    # each node from nodes that haven't been added to the order yet
+    # each node from nodes that haven't been added to the ordering yet
     node_to_number_of_incoming_edges = {
         node: 0 for node in graph
     }
@@ -144,13 +145,13 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 
         for direct_successor, edge_weight in graph[current_node]:
 
-            # get the shortest distance to the current node and direct successor
+            # get the shortest distance to the current node and to the direct successor
             # or an arbitrarily large value if we haven't found a path yet
             current_node_shortest_path_value     = shortest_path_distances.get(current_node, float('inf'))
             direct_successor_shortest_path_value = shortest_path_distances.get(direct_successor, float('inf'))
 
-            # if the current node's path to the direct successor is shorter, update
-            # the direct successor's shortest path
+            # if the current node's path to the direct successor is the shortest
+            # path so far, update the direct successor's shortest path
             if current_node_shortest_path_value + edge_weight < direct_successor_shortest_path_value:
                 shortest_path_distances[direct_successor]    = current_node_shortest_path_value + edge_weight
                 shortest_path_predecessors[direct_successor] = current_node

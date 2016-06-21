@@ -27,7 +27,7 @@ from Queue import Queue
 
 def shortest_path_bfs(graph, start_node, target_node):
 
-    if start_node not in graph or target_node not in graph:
+    if (start_node not in graph) or (target_node not in graph):
         raise Exception('Start or target node not in graph')
 
     visited_nodes_with_unvisited_neighbors = Queue()
