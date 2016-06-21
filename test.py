@@ -61,7 +61,11 @@ def get_edge_count(node_a, node_b, edges):
 
 
 def build_graphs(edges, input_nodes=None):
-    graph_nodes = input_nodes or nodes
+    if input_nodes != None:
+        graph_nodes = input_nodes
+    else:
+        graph_nodes = nodes
+
     for graph_type, build_graph_type in graph_types.iteritems():
         test_graphs[test][graph_type] = build_graph_type(graph_nodes, edges)
 
@@ -101,12 +105,18 @@ test = 'empty graph'
 
 build_graphs([], [])
 add_shortest_path_tests('A', 'B', [], [])
+add_expected_failure('topological_order_kahns', 'Start or target node not in graph')
+add_expected_failure('TopologicalOrderDfs', 'Start or target node not in graph')
+add_expected_failure('shortest_path_bfs', 'Start or target node not in graph')
 
 
 test = 'one node'
 
 build_graphs([], ['A'])
 add_shortest_path_tests('A', 'B', [], [])
+add_expected_failure('topological_order_kahns', 'Start or target node not in graph')
+add_expected_failure('TopologicalOrderDfs', 'Start or target node not in graph')
+add_expected_failure('shortest_path_bfs', 'Start or target node not in graph')
 
 
 test = 'disconnected'
@@ -292,6 +302,18 @@ def fail(message, cyclic=False):
     print 'FAIL: %s' % message
     results['fail'] += 1
 
+def get_expected_failure(test_name, algorithm):
+    for failure in expected_failures:
+        if (test_name, algorithm.__name__) == failure[0:2]:
+            return failure
+    return None
+
+def verify_expected_failure(expected_failure, exception):
+    if expected_failure and expected_failure[2] in exception.message:
+        pass_()
+    else:
+        fail(exception.message)
+
 
 # coloring
 
@@ -310,26 +332,23 @@ for coloring_algorithm in coloring_algorithms:
 
         graph = graph_types['unweighted_undirected_colored']
 
-        d = max([len(node.neighbors) for node in graph])
+        try:
+            d = max([len(node.neighbors) for node in graph])
+        except ValueError:
+            d = 0
+
         d_plus_one_colors = colors[:d + 1]
 
         for node in graph:
             node.color = None
 
-        expected_failure = None
-        for failure in expected_failures:
-            if (test_name, coloring_algorithm.__name__) == failure[0:2]:
-                expected_failure = failure
+        expected_failure = get_expected_failure(test_name, coloring_algorithm)
 
         try:
             coloring_algorithm(graph, d_plus_one_colors)
         except Exception as e:
-            if expected_failure and expected_failure[2] in e.message:
-                pass_()
-                continue
-            else:
-                fail(e.message)
-                continue
+            verify_expected_failure(expected_failure, e)
+            continue
         else:
             if expected_failure:
                 fail('Failed to raise error: %s' % expected_failure[2])
@@ -387,9 +406,19 @@ for topological_ordering_algorithm in topological_ordering_algorithms:
             fail('Not topologically sorted', test_name in directed_cyclic_graphs)
             continue
 
-        if topological_shortest_path(graph, topologically_ordered_nodes, start_node, target_node) != shortest_path:
-            fail('Not shortest path', test_name in directed_cyclic_graphs)
+        expected_failure = get_expected_failure(test_name, topological_ordering_algorithm)
+
+        try:
+            if topological_shortest_path(graph, topologically_ordered_nodes, start_node, target_node) != shortest_path:
+                fail('Not shortest path', test_name in directed_cyclic_graphs)
+                continue
+        except Exception as e:
+            verify_expected_failure(expected_failure, e)
             continue
+        else:
+            if expected_failure:
+                fail('Failed to raise error: %s' % expected_failure[2])
+                continue
 
         pass_(cyclic=test_name in directed_cyclic_graphs)
 
@@ -411,9 +440,19 @@ for test_name, graph_types in iter(sorted(test_graphs.iteritems())):
 
     start_node, target_node, shortest_path = shortest_paths[test_name][1]
 
-    if shortest_path_bfs(graph, start_node, target_node) != shortest_path:
-        fail('Not shortest path')
+    expected_failure = get_expected_failure(test_name, shortest_path_bfs)
+
+    try:
+        if shortest_path_bfs(graph, start_node, target_node) != shortest_path:
+            fail('Not shortest path')
+            continue
+    except Exception as e:
+        verify_expected_failure(expected_failure, e)
         continue
+    else:
+        if expected_failure:
+            fail('Failed to raise error: %s' % expected_failure[2])
+            continue
 
     pass_()
 
