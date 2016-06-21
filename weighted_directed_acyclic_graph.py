@@ -14,14 +14,22 @@ graph = {
 }
 
 
+# shortest path using topological ordering
+
+# by ordering the nodes so that every node comes after all its predecessors, we can
+# iterate over the nodes and find the shortest path to each node. this ordering is possible
+# because the graph is directed and acyclic
+
+
 # topological ordering (dfs)
 #
-# identify the nodes with no outgoing edges
+# visit each node using dfs and add the node to the ordering when it has no successors or
+# no unvisited successors. so all edges must point to a node that's already been added
 #
-# time:   O(N + M)  where N is the number of nodes and M is the number of edges. we go through
-#                   every node once and check if all its direct successors have been visited.
-# space:  O(N)      the ordered nodes take up N space and the call stack will use N space in
-#                   the worst case (graph is a straight line)
+# time:   O(N+M)   where N is the number of nodes and M is the number of edges. we go through
+#                  every node and its outgoing edges
+# space:  O(N)     the ordered nodes always take up N space and the call stack uses N space
+#                  in the worst case (graph is a straight line from start to target node)
 
 class TopologicalOrderDfs:
 
@@ -51,12 +59,13 @@ class TopologicalOrderDfs:
 
 # topological ordering (Khan's algorithm)
 #
-# take leaf nodes and keep removing them
+# keep adding nodes to the ordering that have no successors or no successors that haven't
+# already been added
 #
-# time:   O(N + M)  where N is the number of nodes and M is the number of edges. we go through
-#                   every node and check if all its direct successors have been visited. N^2
-# space:  O(N)      the output and dictionary holding the numbers of incoming edges use N space
-#                   and the set of nodes with no incoming edges uses N space in the worse case
+# time:   O(N+M)   where N is the number of nodes and M is the number of edges. we go through
+#                  every node and its outgoing edges
+# space:  O(N)     the output and dictionary holding the numbers of incoming edges use N space
+#                  and the set of nodes with no incoming edges uses N space in the worst case
 
 def topological_order_kahns(graph):
 
@@ -93,11 +102,11 @@ def topological_order_kahns(graph):
 #
 # use topologically sorted nodes
 #
-# time:   O(N + M)  where N is the number of nodes and M is the number of edges. in the worse
-#                   case the start node is the first topologically ordered node so we go
-#                   through all the nodes and their direct successors
-#                   node and check if all its direct successors have been visited. N^2
-# space:  O(N)      the shortest path nodes, predecessors, and values use N space
+# time:   O(N+M)   where N is the number of nodes and M is the number of edges. in the worst
+#                  case the start node is the first node and the target node is the last
+#                  node so we go through all the nodes and their direct successors
+# space:  O(N)     the output, shortest path values, and shortest path predecessors hold all
+#                  the nodes in the worst case
 
 from itertools import islice
 
@@ -106,9 +115,13 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
     shortest_path_values       = {start_node: 0}
     shortest_path_predecessors = {}
 
-    start_node_index = topologically_ordered_nodes.index(start_node)
+    try:
+        start_node_index  = topologically_ordered_nodes.index(start_node)
+        target_node_index = topologically_ordered_nodes.index(target_node)
+    except ValueError:
+        raise Exception('Start or target node not in graph')
 
-    for current_node in islice(topologically_ordered_nodes, start_node_index, None):
+    for current_node in islice(topologically_ordered_nodes, start_node_index, target_node_index):
 
         for direct_successor, edge_weight in graph[current_node]:
 
@@ -134,15 +147,17 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 
 # notes:
 #
-# Dijkstra's, Bellman-Ford, A*
+# considering Dijkstra's, Bellman-Ford, A*
 # negative cycles
-# disconnected graphs
 # reverse list (or insert at beginning) operations
-# edge cases:
+# expressing M in terms of N
+#
+# edge cases
 #     less than 2 nodes in graph
 #     start node and target node are the same
 #     start node or target node aren't in graph
 #     invalid graph (cyclic, loop)
-#     disconnected, negative edges, multiple edges
+#     negative edges
+#     multiple edges
 #     no path (disconnected or wrong directions)
 #     only 1 path (no second shortest path)

@@ -1,5 +1,5 @@
 # legally color an unweighted, undirected graph using
-# D+1 or fewer colors, where D is the maximum degree
+# D+1 or fewer colors where D is the maximum degree
 
 
 # nodes are represented by a list of node objects that have a label,
@@ -17,11 +17,10 @@ class Node:
 #
 # try every possible combination of colors until we find a legal coloring
 #
-# time:   O(C^N * N+M)  where C is the number of colors and N is the number of nodes. this is
-#                       effectively O(N^N) in a graph where one node connects to all other nodes
-#                       because D would be N-1 and C is defined as D+1
-#                       except for multiple edges
-# space:  O(1)          itertools.product is an iterator
+# time:   O(C^N * N+M)   where C is the number of colors, N is the number of nodes, and M is the
+#                        number of edges. for every combination of colors, we check if the
+#                        coloring is legal by going through every node once and every edge twice
+# space:  O(1)           itertools.product is an iterator
 
 import itertools
 
@@ -53,15 +52,12 @@ def is_graph_legally_colored(graph):
 
 # greedy
 #
-# with ordered nodes and colors, color each node with the first color that's legal
+# with ordered nodes and colors, go through each node and color it with the first
+# available legal color
 #
-# time:   O(N+M)  where N is the number of nodes and M is the number of edges.
-#                 but M is triangular series of N-1 in a complete graph (every node
-#                 connected) so can be O(N^2). M is useful because it more closely
-#                 gives the big o for all graphs, not just complete graphs
-# space:  O(D)    we need to track the illegal colors for a node, which is at most
-#                 all of the colors except 1, or the maximum degree, which in the
-#                 worse case in N-1
+# time:   O(N+M)   where N is the number of nodes and M is the number of edges. we go
+#                  through every node once and every edge twice
+# space:  O(D)     we need to track all the illegal colors for each node
 
 def color_graph_greedy(graph, colors):
 
@@ -89,6 +85,7 @@ def color_graph_greedy(graph, colors):
 #     number of colored neighbors
 #     high saturation (most unique neighbor colors)
 #
+# expressing C and M in terms of N
 # backtracking (not needed because we know D+1 colors work)
 #
 # edge cases
