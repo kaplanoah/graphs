@@ -14,17 +14,18 @@ graph = {
 }
 
 
-# shortest path using topological ordering
+# topological ordering overview
 
-# by ordering the nodes so that every node comes after all its predecessors, we can
-# iterate over the nodes and find the shortest path to each node. this ordering is possible
-# because the graph is directed and acyclic
+# if we can order the nodes so every node comes after all its predecessors, we can iterate over
+# the nodes in one pass from the start node to the target node and track the shortest path so
+# far to each node's direct successors. this ordering is possible because the graph is directed
+# and acyclic
 
 
 # topological ordering (dfs)
 #
-# visit each node using dfs and add the node to the ordering when it has no successors or
-# no unvisited successors. so all edges must point to a node that's already been added
+# using dfs visit each node and add the node to the ordering when it has no successors or all
+# its successors have been added. all edges must point to a node earlier in the ordering
 #
 # time:   O(N+M)   where N is the number of nodes and M is the number of edges. we go through
 #                  every node and its outgoing edges
@@ -39,10 +40,10 @@ class TopologicalOrderDfs:
     def order_graph(self):
 
         self.reverse_topologically_ordered_nodes = []
-        self.visited_nodes = set()
+        self.added_nodes = set()
 
         for node in self.graph:
-            if node not in self.visited_nodes:
+            if node not in self.added_nodes:
                 self.order_node_dfs(node)
 
         return list(reversed(self.reverse_topologically_ordered_nodes))
@@ -50,17 +51,17 @@ class TopologicalOrderDfs:
     def order_node_dfs(self, node):
 
         for direct_successor, edge_weight in self.graph[node]:
-            if direct_successor not in self.visited_nodes:
+            if direct_successor not in self.added_nodes:
                 self.order_node_dfs(direct_successor)
 
         self.reverse_topologically_ordered_nodes.append(node)
-        self.visited_nodes.add(node)
+        self.added_nodes.add(node)
 
 
 # topological ordering (Khan's algorithm)
 #
-# keep adding nodes to the ordering that have no successors or no successors that haven't
-# already been added
+# keep adding nodes to the ordering that have no predecessors or whose predecessors have all
+# been added. all edges must point to a node later in the ordering
 #
 # time:   O(N+M)   where N is the number of nodes and M is the number of edges. we go through
 #                  every node and its outgoing edges
@@ -100,7 +101,8 @@ def topological_order_kahns(graph):
 
 # shortest path
 #
-# use topologically sorted nodes
+# traverse the topologically ordered nodes from the start node to the target node
+# checking to see if a node can give a shorter path to its direct successors
 #
 # time:   O(N+M)   where N is the number of nodes and M is the number of edges. in the worst
 #                  case the start node is the first node and the target node is the last

@@ -14,9 +14,9 @@ graph = {
 
 # breadth first search
 #
-# using bfs visit each node and store the distance to the node and the previous node in
-# the path we took. because the graph is unweighted and we're using bfs, the first time
-# we visit a node we know we've used the shortest path to get to that node
+# using bfs visit each node and store the distance to the node and the direct predecessor in
+# the path we took to the node. because the graph is unweighted and we're using bfs, the
+# first time we visit a node we know we've used the shortest path to get to that node
 #
 # time:   O(N+M)   where N is the number of nodes and M is the number of edges. we go through
 #                  every node once and check every edge twice
