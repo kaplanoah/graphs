@@ -45,8 +45,11 @@ def is_graph_legally_colored(graph):
 
     for node in graph:
         for neighbor in node.neighbors:
+
+            # ensure neighbors have different colors
             if (node.color == neighbor.color) or (not node.color):
                 return False
+
     return True
 
 
@@ -66,8 +69,10 @@ def color_graph_greedy(graph, colors):
         if node in node.neighbors:
             raise Exception('Legal coloring impossible for node with loop: %s' % node.label)
 
+        # get all the node's neighbors' colors
         illegal_colors = set([neighbor.color for neighbor in node.neighbors if neighbor.color])
 
+        # assign the first legal color
         for color in colors:
             if color not in illegal_colors:
                 node.color = color

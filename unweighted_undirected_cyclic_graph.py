@@ -30,24 +30,20 @@ def shortest_path_bfs(graph, start_node, target_node):
     if start_node not in graph or target_node not in graph:
         raise Exception('Start or target node not in graph')
 
-    # initialize a queue of nodes whose neighbors we need to visit
-    # and a set to track nodes we've already visited
-    queue = Queue()
+    visited_nodes_with_unvisited_neighbors = Queue()
     visited_nodes = set()
 
-    # queue and visit the start node
-    queue.put(start_node)
-    visited_nodes.add(start_node)
-
-    # initialize dictionaries to track the distance of the shortest
-    # path to each node and that path's previous node
+    # to track the shortest path to each node, initialize dictionaries
+    # to hold the path's distance and previous node
     shortest_path_distances      = {start_node: 0}
-    shortest_path_previous_nodes = {}
+    shortest_path_previous_nodes = {start_node: None}
 
-    while not queue.empty():
+    visited_nodes.add(start_node)
+    visited_nodes_with_unvisited_neighbors.put(start_node)
 
-        # visit each node's unvisited neighbors
-        node = queue.get()
+    while not visited_nodes_with_unvisited_neighbors.empty():
+        node = visited_nodes_with_unvisited_neighbors.get()
+
         for neighbor in graph[node]:
             if neighbor not in visited_nodes:
 
@@ -55,9 +51,8 @@ def shortest_path_bfs(graph, start_node, target_node):
                 shortest_path_distances[neighbor] = shortest_path_distances[node] + 1
                 shortest_path_previous_nodes[neighbor] = node
 
-                # queue the neighbor to visit it's neighbors
-                queue.put(neighbor)
                 visited_nodes.add(neighbor)
+                visited_nodes_with_unvisited_neighbors.put(neighbor)
 
     # if the target node doesn't have a previous node, there's no shortest path
     if not shortest_path_previous_nodes.get(target_node):
