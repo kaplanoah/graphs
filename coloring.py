@@ -3,7 +3,7 @@
 
 
 # nodes are represented by a list of node objects that have a label,
-# a list of neighbors, and a color (effectively an adjacency list)
+# a list of neighbors (an adjacency list), and a color
 
 class Node:
 
@@ -73,10 +73,7 @@ def color_graph_greedy(graph, colors):
         illegal_colors = set([neighbor.color for neighbor in node.neighbors if neighbor.color])
 
         # assign the first legal color
-        for color in colors:
-            if color not in illegal_colors:
-                node.color = color
-                break
+        node.color = [color for color in colors if color not in illegal_colors][0]
 
 
 # notes:

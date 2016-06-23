@@ -1,4 +1,4 @@
-# find the second shortest path from a start node to a
+# find the shortest path from a start node to a
 # target node in a weighted, directed, acyclic graph
 
 

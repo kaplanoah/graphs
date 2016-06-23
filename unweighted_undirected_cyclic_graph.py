@@ -1,4 +1,4 @@
-# find the second shortest path from a start node to a target
+# find the shortest path from a start node to a target
 # node in an unweighted, undirected, cyclic graph
 
 
