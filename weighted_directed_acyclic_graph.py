@@ -2,7 +2,7 @@
 # target node in a weighted, directed, acyclic graph
 
 
-# nodes are represented by a dictionary of (string, list) pairs where the string
+# graphs are represented by a dictionary of (string, list) pairs where the string
 # is the node value and the list holds tuples of the node's direct successors
 # (string, int) where the string is the direct successor's value and the int is
 # the weight of the edge to the direct successor
@@ -145,7 +145,7 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 
         for direct_successor, edge_weight in graph[current_node]:
 
-            # get the shortest distance to the current node and to the direct successor
+            # get the shortest distance so far to the current node and to the direct successor
             # or an arbitrarily large value if we haven't found a path yet
             current_node_shortest_path_value     = shortest_path_distances.get(current_node, float('inf'))
             direct_successor_shortest_path_value = shortest_path_distances.get(direct_successor, float('inf'))
@@ -158,7 +158,7 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 
     # if the target node doesn't have a previous node, there's no shortest path
     if not shortest_path_predecessors.get(target_node):
-        return []
+        return None
 
     # backtrack the shortest path
     reverse_shortest_path = []
@@ -187,3 +187,4 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 #     multiple edges
 #     no path (disconnected or wrong directions)
 #     only 1 path (no second shortest path)
+#     start or target node in cycle

@@ -2,7 +2,7 @@
 # D+1 or fewer colors where D is the maximum degree
 
 
-# nodes are represented by a list of node objects that have a label,
+# graphs are represented by a list of node objects that have a label,
 # a list of neighbors (an adjacency list), and a color
 
 class Node:
@@ -87,6 +87,9 @@ def color_graph_greedy(graph, colors):
 #     number of colored neighbors
 #     high saturation (most unique neighbor colors)
 #
+# set of colors (unordered)
+# itertools by hand
+# temporarily destructive (risky with multithreating)
 # expressing C and M in terms of N
 # backtracking (not needed because we know D+1 colors work)
 #

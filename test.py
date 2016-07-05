@@ -104,7 +104,7 @@ def add_expected_failure(function_name, error_message):
 test = 'empty graph'
 
 build_graphs([], [])
-add_shortest_path_tests('A', 'B', [], [])
+add_shortest_path_tests('A', 'B', None, None)
 add_expected_failure('topological_order_kahns', 'Start or target node not in graph')
 add_expected_failure('TopologicalOrderDfs', 'Start or target node not in graph')
 add_expected_failure('shortest_path_bfs', 'Start or target node not in graph')
@@ -113,7 +113,7 @@ add_expected_failure('shortest_path_bfs', 'Start or target node not in graph')
 test = 'one node'
 
 build_graphs([], ['A'])
-add_shortest_path_tests('A', 'B', [], [])
+add_shortest_path_tests('A', 'B', None, None)
 add_expected_failure('topological_order_kahns', 'Start or target node not in graph')
 add_expected_failure('TopologicalOrderDfs', 'Start or target node not in graph')
 add_expected_failure('shortest_path_bfs', 'Start or target node not in graph')
@@ -122,28 +122,28 @@ add_expected_failure('shortest_path_bfs', 'Start or target node not in graph')
 test = 'disconnected'
 
 build_graphs([])
-add_shortest_path_tests('A', 'D', [], [])
+add_shortest_path_tests('A', 'D', None, None)
 
 
 test = 'line'
 
 build_graphs([('A', 'B', 6), ('B', 'C', 9), ('C', 'D', 4), ('D', 'E', 7), ('E', 'F', 4),
               ('F', 'G', 1)])
-add_shortest_path_tests('D', 'G', ['D', 'E', 'F', 'G'], [])
+add_shortest_path_tests('D', 'G', ['D', 'E', 'F', 'G'], None)
 
 
 test = 'leaf'
 
 build_graphs([('A', 'B', 1), ('A', 'C', 4), ('B', 'D', 2), ('C', 'E', 3), ('D', 'F', 7),
               ('E', 'G', 1)])
-add_shortest_path_tests('A', 'D', ['A', 'B', 'D'], [])
+add_shortest_path_tests('A', 'D', ['A', 'B', 'D'], None)
 
 
 test = 'tree'
 
 build_graphs([('A', 'B', 2), ('A', 'C', 9), ('B', 'D', 3), ('B', 'E', 1), ('C', 'F', 4),
               ('E', 'G', 2)])
-add_shortest_path_tests('A', 'G', ['A', 'B', 'E', 'G'], [])
+add_shortest_path_tests('A', 'G', ['A', 'B', 'E', 'G'], None)
 
 
 test = 'negative edges'
@@ -157,7 +157,7 @@ test = 'cycle'
 
 build_graphs([('A', 'B', 6), ('B', 'C', 9), ('C', 'D', 4), ('D', 'E', 7), ('E', 'F', 4),
               ('F', 'G', 1), ('G', 'A', 9)])
-add_shortest_path_tests('B', 'D', ['B', 'C', 'D'], [])
+add_shortest_path_tests('B', 'D', ['B', 'C', 'D'], None)
 directed_cyclic_graphs.add(test)
 
 
@@ -229,7 +229,7 @@ test = 'star'
 
 build_graphs([('A', 'B', 5), ('A', 'C', 6), ('A', 'D', 3), ('A', 'E', 7), ('A', 'F', 1),
               ('A', 'G', 2)])
-add_shortest_path_tests('A', 'D', ['A', 'D'], [])
+add_shortest_path_tests('A', 'D', ['A', 'D'], None)
 
 
 test = 'bipartite'
@@ -367,7 +367,7 @@ test = 'nodes vs weight'
 add_shortest_path_tests('A', 'G', ['A', 'C', 'E', 'F', 'G'], ['A', 'B', 'D', 'G'])
 
 test = 'no directed path'
-add_shortest_path_tests('C', 'A', [], [])
+add_shortest_path_tests('C', 'A', None, None)
 
 topological_ordering_algorithms = [
     TopologicalOrderDfs,
@@ -429,7 +429,7 @@ test = 'nodes vs weight'
 add_shortest_path_tests('A', 'G', ['A', 'B', 'D', 'G'], ['A', 'C', 'E', 'F', 'G'])
 
 test = 'no directed path'
-add_shortest_path_tests('C', 'A', ['C', 'B', 'A'], [])
+add_shortest_path_tests('C', 'A', ['C', 'B', 'A'], None)
 
 print '\n%s' % 'shortest_path_bfs'
 

@@ -2,7 +2,7 @@
 # node in an unweighted, undirected, cyclic graph
 
 
-# nodes are represented by a dictionary of (string, list) pairs where the string
+# graphs are represented by a dictionary of (string, list) pairs where the string
 # is the node value and the list holds the node's neighbors' values
 
 graph = {
@@ -14,9 +14,9 @@ graph = {
 
 # breadth first search
 #
-# using bfs visit each node and store the distance to the node and the direct predecessor in
-# the path we took to the node. because the graph is unweighted and we're using bfs, the
-# first time we visit a node we know we've used the shortest path to get to that node
+# using bfs, visit each node and store the the direct predecessor in the path we took to the
+# node. because the graph is unweighted and we're using bfs, the first time we visit a node
+# we know we've used the shortest path to get to that node
 #
 # time:   O(N+M)   where N is the number of nodes and M is the number of edges. we go through
 #                  every node once and check every edge twice
@@ -33,9 +33,9 @@ def shortest_path_bfs(graph, start_node, target_node):
     visited_nodes_with_unvisited_neighbors = Queue()
     visited_nodes = set()
 
-    # to track the shortest path to each node, initialize dictionaries
-    # to hold the path's distance and previous node
-    shortest_path_distances      = {start_node: 0}
+    # initialize a dictionary to store the previous node in the
+    # shortest path to each node. we'll use this to backtrack
+    # from the target node to the start node
     shortest_path_previous_nodes = {start_node: None}
 
     visited_nodes.add(start_node)
@@ -47,8 +47,7 @@ def shortest_path_bfs(graph, start_node, target_node):
         for neighbor in graph[node]:
             if neighbor not in visited_nodes:
 
-                # set the shortest path distance and previous node
-                shortest_path_distances[neighbor] = shortest_path_distances[node] + 1
+                # set the shortest path previous node
                 shortest_path_previous_nodes[neighbor] = node
 
                 visited_nodes.add(neighbor)
@@ -56,7 +55,7 @@ def shortest_path_bfs(graph, start_node, target_node):
 
     # if the target node doesn't have a previous node, there's no shortest path
     if not shortest_path_previous_nodes.get(target_node):
-        return []
+        return None
 
     # backtrack the shortest path
     reverse_shortest_path = []
@@ -83,3 +82,4 @@ def shortest_path_bfs(graph, start_node, target_node):
 #     multiple edges, loops
 #     no path (disconnected)
 #     only 1 path (no second shortest path)
+#     start or target node in cycle
