@@ -3,6 +3,7 @@ from collections import defaultdict
 
 from coloring import Node, color_graph_brute_force, color_graph_greedy, is_graph_legally_colored
 from weighted_directed_acyclic_graph import TopologicalOrderDfs, topological_order_kahns, shortest_path as topological_shortest_path
+from weighted_directed_cyclic_graph import shortest_path_djikstras
 from unweighted_undirected_cyclic_graph import shortest_path_bfs
 
 
