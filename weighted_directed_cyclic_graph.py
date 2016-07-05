@@ -43,6 +43,7 @@ def shortest_path_djikstras(graph, start_node, target_node):
         min_distance = float('inf')
         for node in unvisited_nodes:
             if shortest_path_distances[node] <= min_distance:
+                min_distance = shortest_path_distances[node]
                 current_node = node
 
         unvisited_nodes.remove(current_node)
@@ -55,7 +56,6 @@ def shortest_path_djikstras(graph, start_node, target_node):
             if current_node_shortest_path_value + edge_weight < direct_successor_shortest_path_value:
                 shortest_path_distances[direct_successor]    = current_node_shortest_path_value + edge_weight
                 shortest_path_predecessors[direct_successor] = current_node
-
 
     # if the target node doesn't have a previous node, there's no shortest path
     if not shortest_path_predecessors.get(target_node):

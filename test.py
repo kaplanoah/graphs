@@ -424,6 +424,41 @@ for topological_ordering_algorithm in topological_ordering_algorithms:
         pass_(cyclic=test_name in directed_cyclic_graphs)
 
 
+# weighted directed cyclic
+
+test = 'nodes vs weight'
+add_shortest_path_tests('A', 'G', ['A', 'C', 'E', 'F', 'G'], ['A', 'B', 'D', 'G'])
+
+test = 'no directed path'
+add_shortest_path_tests('C', 'A', None, None)
+
+print '\n%s' % 'shortest_path_djikstras'
+
+for test_name, graph_types in iter(sorted(test_graphs.iteritems())):
+
+    print '\t%s' % test_name.ljust(20),
+
+    graph = graph_types['weighted_directed']
+
+    start_node, target_node, shortest_path = shortest_paths[test_name][1]
+
+    expected_failure = get_expected_failure(test_name, shortest_path_djikstras)
+
+    try:
+        if shortest_path_djikstras(graph, start_node, target_node) != shortest_path:
+            fail('Not shortest path')
+            continue
+    except Exception as e:
+        verify_expected_failure(expected_failure, e)
+        continue
+    else:
+        if expected_failure:
+            fail('Failed to raise error: %s' % expected_failure[2])
+            continue
+
+    pass_()
+
+
 # unweighted undirected cyclic
 
 test = 'nodes vs weight'
