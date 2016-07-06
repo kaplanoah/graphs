@@ -25,33 +25,29 @@ graph = {
 
 def shortest_path_djikstras(graph, start_node, target_node):
 
-    unvisited_nodes = set()
+    if (start_node not in graph) or (target_node not in graph):
+        raise Exception('Start or target node not in graph')
 
-    shortest_path_distances    = {}
-    shortest_path_predecessors = {}
+    unvisited_nodes = set(graph)
 
-    for node in graph:
-        shortest_path_distances[node]    = float('inf')
-        shortest_path_predecessors[node] = None
-        unvisited_nodes.add(node)
-
-    shortest_path_distances[start_node]    = 0
-    shortest_path_predecessors[start_node] = None
+    shortest_path_distances    = {start_node: 0}
+    shortest_path_predecessors = {start_node: None}
 
     while len(unvisited_nodes):
 
         min_distance = float('inf')
         for node in unvisited_nodes:
-            if shortest_path_distances[node] <= min_distance:
-                min_distance = shortest_path_distances[node]
+            shortest_distance = shortest_path_distances.get(node, float('inf'))
+            if shortest_distance <= min_distance:
+                min_distance = shortest_distance
                 current_node = node
 
         unvisited_nodes.remove(current_node)
 
         for direct_successor, edge_weight in graph[current_node]:
 
-            current_node_shortest_path_value = shortest_path_distances[current_node]
-            direct_successor_shortest_path_value = shortest_path_distances[direct_successor]
+            current_node_shortest_path_value = shortest_path_distances.get(current_node, float('inf'))
+            direct_successor_shortest_path_value = shortest_path_distances.get(direct_successor, float('inf'))
 
             if current_node_shortest_path_value + edge_weight < direct_successor_shortest_path_value:
                 shortest_path_distances[direct_successor]    = current_node_shortest_path_value + edge_weight
@@ -75,7 +71,8 @@ def shortest_path_djikstras(graph, start_node, target_node):
 
 # notes:
 #
-# considering Bellman-Ford (negative cycles), A*
+# negative cycles (Bellman-Ford)
+# considering A*
 # reverse list (or insert at beginning) operations
 # expressing M in terms of N
 #
@@ -83,7 +80,7 @@ def shortest_path_djikstras(graph, start_node, target_node):
 #     less than 2 nodes in graph
 #     start node and target node are the same
 #     start node or target node aren't in graph
-#     invalid graph (cyclic, loop)
+#     loop
 #     negative edges
 #     multiple edges
 #     no path (disconnected or wrong directions)

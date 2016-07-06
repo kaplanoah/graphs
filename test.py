@@ -109,6 +109,7 @@ add_shortest_path_tests('A', 'B', None, None)
 add_expected_failure('topological_order_kahns', 'Start or target node not in graph')
 add_expected_failure('TopologicalOrderDfs', 'Start or target node not in graph')
 add_expected_failure('shortest_path_bfs', 'Start or target node not in graph')
+add_expected_failure('shortest_path_djikstras', 'Start or target node not in graph')
 
 
 test = 'one node'
@@ -118,6 +119,7 @@ add_shortest_path_tests('A', 'B', None, None)
 add_expected_failure('topological_order_kahns', 'Start or target node not in graph')
 add_expected_failure('TopologicalOrderDfs', 'Start or target node not in graph')
 add_expected_failure('shortest_path_bfs', 'Start or target node not in graph')
+add_expected_failure('shortest_path_djikstras', 'Start or target node not in graph')
 
 
 test = 'disconnected'
@@ -434,9 +436,15 @@ add_shortest_path_tests('C', 'A', None, None)
 
 print '\n%s' % 'shortest_path_djikstras'
 
+invalid_djikstras_input = ['negative cyclic', 'negative loop']
+
 for test_name, graph_types in iter(sorted(test_graphs.iteritems())):
 
     print '\t%s' % test_name.ljust(20),
+
+    if test_name in invalid_djikstras_input:
+        print 'skipped'
+        continue
 
     graph = graph_types['weighted_directed']
 

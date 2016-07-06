@@ -187,4 +187,3 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 #     multiple edges
 #     no path (disconnected or wrong directions)
 #     only 1 path (no second shortest path)
-#     start or target node in cycle
