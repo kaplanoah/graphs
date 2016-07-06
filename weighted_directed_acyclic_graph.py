@@ -131,8 +131,9 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 
     # to track the shortest path to each node, initialize dictionaries
     # to hold the path's distance and previous node
-    shortest_path_distances    = {start_node: 0}
-    shortest_path_predecessors = {start_node: None}
+    shortest_path_distances = {node: float('inf') for node in graph}
+    shortest_path_distances[start_node] = 0
+    shortest_path_direct_predecessors = {}
 
     try:
         start_node_index  = topologically_ordered_nodes.index(start_node)
@@ -145,19 +146,19 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 
         for direct_successor, edge_weight in graph[current_node]:
 
-            # get the shortest distance so far to the current node and to the direct successor
-            # or an arbitrarily large value if we haven't found a path yet
-            current_node_shortest_path_value     = shortest_path_distances.get(current_node, float('inf'))
-            direct_successor_shortest_path_value = shortest_path_distances.get(direct_successor, float('inf'))
+            # get the shortest distance we have so far for the direct successor
+            # and the distance from the current node to the direct successor
+            shortest_path_so_far            = shortest_path_distances[direct_successor]
+            shortest_path_from_current_node = shortest_path_distances[current_node] + edge_weight
 
             # if the current node's path to the direct successor is the shortest
             # path so far, update the direct successor's shortest path
-            if current_node_shortest_path_value + edge_weight < direct_successor_shortest_path_value:
-                shortest_path_distances[direct_successor]    = current_node_shortest_path_value + edge_weight
-                shortest_path_predecessors[direct_successor] = current_node
+            if shortest_path_from_current_node < shortest_path_so_far:
+                shortest_path_distances[direct_successor] = shortest_path_from_current_node
+                shortest_path_direct_predecessors[direct_successor] = current_node
 
     # if the target node doesn't have a previous node, there's no shortest path
-    if not shortest_path_predecessors.get(target_node):
+    if not shortest_path_direct_predecessors.get(target_node):
         return None
 
     # backtrack the shortest path
@@ -166,7 +167,7 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 
     while current_node:
         reverse_shortest_path.append(current_node)
-        current_node = shortest_path_predecessors.get(current_node)
+        current_node = shortest_path_direct_predecessors.get(current_node)
 
     return list(reversed(reverse_shortest_path))
 
