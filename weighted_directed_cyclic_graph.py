@@ -46,6 +46,10 @@ def shortest_path_djikstras(graph, start_node, target_node):
                 current_node = node
                 min_distance = shortest_path_distances[node]
 
+        # we can stop when we reach the target node
+        if current_node == target_node:
+            break
+
         for direct_successor, edge_weight in graph[current_node]:
 
             # get the shortest distance we have so far for the direct successor
