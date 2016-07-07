@@ -19,11 +19,11 @@ graph = {
 # greedily update the shortest path to each node, branching out from the node with the shortest
 # distance
 #
-# time:   O(N^2 + M)   where N is the number of nodes and M is the number of edges. for every
-#                      node we go through every other node (the summation 1..N in total) and
-#                      its outgoing edges
-# space:  O(N)         unvisited nodes, shortest path distance and direct predecessors,
-#                      shortest path
+# time:   O(N^2)   where N is the number of nodes and M is the number of edges. for every
+#                  node we go through every other node (the summation 1..N in total) and
+#                  its outgoing edges
+# space:  O(N)     unvisited nodes, shortest path distance and direct predecessors,
+#                  shortest path
 
 def shortest_path_djikstras(graph, start_node, target_node):
 
@@ -54,15 +54,15 @@ def shortest_path_djikstras(graph, start_node, target_node):
 
         for direct_successor, edge_weight in graph[current_node]:
 
-            # get the shortest distance we have so far for the direct successor
-            # and the distance from the current node to the direct successor
-            shortest_path_so_far            = shortest_path_distances[direct_successor]
-            shortest_path_from_current_node = shortest_path_distances[current_node] + edge_weight
+            # get the shortest distance we have to the direct successor so far,
+            # and the distance to the direct successor from the current node
+            shortest_distance_so_far   = shortest_path_distances[direct_successor]
+            distance_from_current_node = shortest_path_distances[current_node] + edge_weight
 
-            # if the current node's path to the direct successor is the shortest
-            # path so far, update the direct successor's shortest path
-            if shortest_path_from_current_node < shortest_path_so_far:
-                shortest_path_distances[direct_successor] = shortest_path_from_current_node
+            if distance_from_current_node < shortest_distance_so_far:
+
+                # update the direct successor's shortest path
+                shortest_path_distances[direct_successor] = distance_from_current_node
                 shortest_path_direct_predecessors[direct_successor] = current_node
 
         unvisited_nodes.remove(current_node)
@@ -90,7 +90,7 @@ def shortest_path_djikstras(graph, start_node, target_node):
 # time:   O(MlogN)   where N is the number of nodes and M is the number of edges. for every
 #                    node we go through every other node (the summation 1..N in total) and
 #                    its outgoing edges
-# space:  O(N)       unvisited nodes, shortest path distance and direct predecessors,
+# space:  O(NM)      unvisited nodes, shortest path distance and direct predecessors,
 #                    shortest path
 
 import heapq
@@ -119,22 +119,27 @@ def shortest_path_djikstras_priority_queue(graph, start_node, target_node):
         if current_node == target_node:
             break
 
+        # we might have the same node in the priority queue multiple
+        # times with different distances. we only care about the lowest
+        # distance, which is the first time we visited the node
         if current_node in visited_nodes:
             continue
 
         for direct_successor, edge_weight in graph[current_node]:
 
-            # get the shortest distance we have so far for the direct successor
-            # and the distance from the current node to the direct successor
-            shortest_path_so_far            = shortest_path_distances[direct_successor]
-            shortest_path_from_current_node = current_node_distance + edge_weight
+            # get the shortest distance we have to the direct successor so far,
+            # and the distance to the direct successor from the current node
+            shortest_distance_so_far   = shortest_path_distances[direct_successor]
+            distance_from_current_node = shortest_path_distances[current_node] + edge_weight
 
-            # if the current node's path to the direct successor is shorter than the
-            # path we'd found, update the direct successor's shortest path
-            if shortest_path_from_current_node < shortest_path_so_far:
-                shortest_path_distances[direct_successor] = shortest_path_from_current_node
+            if distance_from_current_node < shortest_distance_so_far:
+
+                # update the direct successor's shortest path
+                shortest_path_distances[direct_successor] = distance_from_current_node
                 shortest_path_direct_predecessors[direct_successor] = current_node
-                heapq.heappush(priority_queue, (shortest_path_from_current_node, direct_successor))
+
+                # add the new distance to the priority queue
+                heapq.heappush(priority_queue, (distance_from_current_node, direct_successor))
 
         visited_nodes.add(current_node)
 
@@ -155,7 +160,10 @@ def shortest_path_djikstras_priority_queue(graph, start_node, target_node):
 
 # notes:
 #
-# decrease key
+# implementing heap for O(logN) decrease_key and O(N) space
+# fibonacci heap
+# insert nodes in priority queue as they're discovered
+#
 # negative cycles (Bellman-Ford)
 # considering A*
 # reverse list (or insert at beginning) operations
