@@ -16,14 +16,17 @@ graph = {
 
 # Dijkstra's algorithm
 #
-# greedily update the shortest path to each node, branching out from the node with the shortest
-# distance
+# from the start node, calculate the distance to each direct successor. then go the direct
+# successor with the shortest distance and calculate the shortest distance so far to each
+# of its direct successors. repeat for every node, always choosing the node with the
+# shortest distance as the next node
 #
-# time:   O(N^2)   where N is the number of nodes and M is the number of edges. for every
-#                  node we go through every other node (the summation 1..N in total) and
-#                  its outgoing edges
-# space:  O(N)     unvisited nodes, shortest path distance and direct predecessors,
-#                  shortest path
+# time:   O(N^2)   where N is the number of nodes. for every node, we go through all the
+#                  unvisited nodes (N * the summation 1..N). we also iterate over all
+#                  the edges M, but drop that linear cost on the edges because of the
+#                  quadratic cost on the nodes
+# space:  O(N)     the unvisited nodes set holds all the nodes, and in the worst case
+#                  the shortest path dictionaries and list hold all the nodes
 
 def shortest_path_djikstras(graph, start_node, target_node):
 
@@ -84,14 +87,19 @@ def shortest_path_djikstras(graph, start_node, target_node):
 
 # Dijkstra's algorithm (priority queue)
 #
-# greedily update the shortest path to each node, branching out from the node with the shortest
-# distance
+# to find the node with the shortest distance so far, use a priority queue with the distance
+# as the key instead of iterating over all the unvisited nodes and greedily finding the node
+# with the shortest distance
 #
-# time:   O(MlogN)   where N is the number of nodes and M is the number of edges. for every
-#                    node we go through every other node (the summation 1..N in total) and
-#                    its outgoing edges
-# space:  O(NM)      unvisited nodes, shortest path distance and direct predecessors,
-#                    shortest path
+# time:   O((N+M)logN)   where N is the number of nodes and M is the number of edges. popping
+#                        from the heap takes logN time, and we pop N times. pushing to the
+#                        heap takes logN time, and in the worst case all M edge weights give
+#                        shorter distances to a node. heapifying the graph, checking for the
+#                        start and target node in the graph, and building the shortest path
+#                        all take N time, but N is a less significant term than NlogN
+# space:  O(N+M)         in the worst case the visitied nodes set, the shortest path list, and
+#                        the shortest path dictionaries hold all the nodes. and the heap holds
+#                        (distance, node) pairs for all M edge weights
 
 import heapq
 
@@ -167,7 +175,8 @@ def shortest_path_djikstras_priority_queue(graph, start_node, target_node):
 # negative cycles (Bellman-Ford)
 # considering A*
 # reverse list (or insert at beginning) operations
-# expressing M in terms of N
+# expressing M in terms of N (complete)
+# expressing N in terms of M (connected)
 #
 # edge cases
 #     less than 2 nodes in graph
