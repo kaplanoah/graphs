@@ -151,7 +151,7 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
             shortest_path_so_far            = shortest_path_distances[direct_successor]
             shortest_path_from_current_node = shortest_path_distances[current_node] + edge_weight
 
-            # if the current node's path to the direct successor is the shortest
+            # if the current node's path to the direct successor is the new shortest
             # path so far, update the direct successor's shortest path
             if shortest_path_from_current_node < shortest_path_so_far:
                 shortest_path_distances[direct_successor] = shortest_path_from_current_node

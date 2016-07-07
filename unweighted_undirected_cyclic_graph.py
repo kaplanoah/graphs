@@ -44,7 +44,7 @@ def shortest_path_bfs(graph, start_node, target_node):
     while not visited_nodes_with_unvisited_neighbors.empty():
         node = visited_nodes_with_unvisited_neighbors.get()
 
-        # we can stop when we reach the target node
+        # stop when we reach the target node
         if node == target_node:
             break
 

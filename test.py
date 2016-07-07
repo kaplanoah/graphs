@@ -3,7 +3,7 @@ from collections import defaultdict
 
 from coloring import Node, color_graph_brute_force, color_graph_greedy, is_graph_legally_colored
 from weighted_directed_acyclic_graph import TopologicalOrderDfs, topological_order_kahns, shortest_path as topological_shortest_path
-from weighted_directed_cyclic_graph import shortest_path_djikstras
+from weighted_directed_cyclic_graph import shortest_path_djikstras, shortest_path_djikstras_priority_queue
 from unweighted_undirected_cyclic_graph import shortest_path_bfs
 
 
@@ -110,6 +110,7 @@ add_expected_failure('topological_order_kahns', 'Start or target node not in gra
 add_expected_failure('TopologicalOrderDfs', 'Start or target node not in graph')
 add_expected_failure('shortest_path_bfs', 'Start or target node not in graph')
 add_expected_failure('shortest_path_djikstras', 'Start or target node not in graph')
+add_expected_failure('shortest_path_djikstras_priority_queue', 'Start or target node not in graph')
 
 
 test = 'one node'
@@ -120,6 +121,7 @@ add_expected_failure('topological_order_kahns', 'Start or target node not in gra
 add_expected_failure('TopologicalOrderDfs', 'Start or target node not in graph')
 add_expected_failure('shortest_path_bfs', 'Start or target node not in graph')
 add_expected_failure('shortest_path_djikstras', 'Start or target node not in graph')
+add_expected_failure('shortest_path_djikstras_priority_queue', 'Start or target node not in graph')
 
 
 test = 'disconnected'
@@ -434,37 +436,41 @@ add_shortest_path_tests('A', 'G', ['A', 'C', 'E', 'F', 'G'], ['A', 'B', 'D', 'G'
 test = 'no directed path'
 add_shortest_path_tests('C', 'A', None, None)
 
-print '\n%s' % 'shortest_path_djikstras'
+djikstras_algorithms = [
+    shortest_path_djikstras,
+    shortest_path_djikstras_priority_queue,
+]
 
-invalid_djikstras_input = ['negative cyclic', 'negative loop']
+for djikstras_algorithm in djikstras_algorithms:
+    print '\n%s' % djikstras_algorithm.__name__
 
-for test_name, graph_types in iter(sorted(test_graphs.iteritems())):
+    for test_name, graph_types in iter(sorted(test_graphs.iteritems())):
 
-    print '\t%s' % test_name.ljust(20),
+        print '\t%s' % test_name.ljust(20),
 
-    if test_name in invalid_djikstras_input:
-        print 'skipped'
-        continue
-
-    graph = graph_types['weighted_directed']
-
-    start_node, target_node, shortest_path = shortest_paths[test_name][1]
-
-    expected_failure = get_expected_failure(test_name, shortest_path_djikstras)
-
-    try:
-        if shortest_path_djikstras(graph, start_node, target_node) != shortest_path:
-            fail('Not shortest path')
-            continue
-    except Exception as e:
-        verify_expected_failure(expected_failure, e)
-        continue
-    else:
-        if expected_failure:
-            fail('Failed to raise error: %s' % expected_failure[2])
+        if 'negative' in test_name:
+            print 'skipped'
             continue
 
-    pass_()
+        graph = graph_types['weighted_directed']
+
+        start_node, target_node, shortest_path = shortest_paths[test_name][1]
+
+        expected_failure = get_expected_failure(test_name, djikstras_algorithm)
+
+        try:
+            if djikstras_algorithm(graph, start_node, target_node) != shortest_path:
+                fail('Not shortest path')
+                continue
+        except Exception as e:
+            verify_expected_failure(expected_failure, e)
+            continue
+        else:
+            if expected_failure:
+                fail('Failed to raise error: %s' % expected_failure[2])
+                continue
+
+        pass_()
 
 
 # unweighted undirected cyclic
