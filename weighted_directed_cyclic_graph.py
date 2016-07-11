@@ -33,13 +33,13 @@ def shortest_path_djikstras(graph, start_node, target_node):
     if (start_node not in graph) or (target_node not in graph):
         raise Exception('Start or target node not in graph')
 
-    unvisited_nodes = set(graph)
-
     # to track the shortest path to each node, initialize dictionaries
     # to hold the path's distance and previous node
     shortest_path_distances = {node: float('inf') for node in graph}
     shortest_path_distances[start_node] = 0
     shortest_path_direct_predecessors = {}
+
+    unvisited_nodes = set(graph)
 
     while len(unvisited_nodes):
 
@@ -57,7 +57,7 @@ def shortest_path_djikstras(graph, start_node, target_node):
 
         for direct_successor, edge_weight in graph[current_node]:
 
-            # get the shortest distance we have to the direct successor so far,
+            # get the shortest distance we have to the direct successor so far
             # and the distance to the direct successor from the current node
             shortest_distance_so_far   = shortest_path_distances[direct_successor]
             distance_from_current_node = shortest_path_distances[current_node] + edge_weight
@@ -108,34 +108,38 @@ def shortest_path_djikstras_priority_queue(graph, start_node, target_node):
     if (start_node not in graph) or (target_node not in graph):
         raise Exception('Start or target node not in graph')
 
-    visited_nodes = set()
-
     # to track the shortest path to each node, initialize dictionaries
     # to hold the path's distance and previous node
     shortest_path_distances = {node: float('inf') for node in graph}
     shortest_path_distances[start_node] = 0
     shortest_path_direct_predecessors = {}
 
+    # set up a priority queue (binary heap) of the nodes
+    # with the distance to the node as the key
     priority_queue = [(shortest_path_distances[node], node) for node in graph]
     heapq.heapify(priority_queue)
+
+    # when we find a shorter distance to a node, we'll add the node to the heap
+    # again with the new distance instead of updating the distance in the heap
+    # (becauase with the built in heapq, updating or deleting entries takes O(N)
+    # not O(logN) time) so we'll track the nodes we visit to avoid visiting
+    # nodes again at outdated longer distances
+    visited_nodes = set()
 
     while len(priority_queue):
 
         current_node_distance, current_node = heapq.heappop(priority_queue)
 
+        if current_node in visited_nodes:
+            continue
+
         # stop when we reach the target node
         if current_node == target_node:
             break
 
-        # we might have the same node in the priority queue multiple
-        # times with different distances. we only care about the lowest
-        # distance, which is the first time we visited the node
-        if current_node in visited_nodes:
-            continue
-
         for direct_successor, edge_weight in graph[current_node]:
 
-            # get the shortest distance we have to the direct successor so far,
+            # get the shortest distance we have to the direct successor so far
             # and the distance to the direct successor from the current node
             shortest_distance_so_far   = shortest_path_distances[direct_successor]
             distance_from_current_node = shortest_path_distances[current_node] + edge_weight

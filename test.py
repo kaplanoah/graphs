@@ -259,7 +259,7 @@ build_graphs([('A', 'B', 6), ('B', 'C', 9), ('C', 'D', 4), ('D', 'E', 7), ('E', 
 
 test = 'multiple edges'
 
-build_graphs([('A', 'B', 4), ('A', 'C', 1), ('A', 'C', 5), ('B', 'D', 7), ('C', 'F', 7),
+build_graphs([('A', 'B', 4), ('A', 'C', 5), ('A', 'C', 1), ('B', 'D', 7), ('C', 'F', 7),
               ('F', 'G', 1), ('F', 'G', 4)])
 add_shortest_path_tests('A', 'G', ['A', 'C', 'F', 'G'], ['A', 'C', 'F', 'G'])
 

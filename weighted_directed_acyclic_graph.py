@@ -146,7 +146,7 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 
         for direct_successor, edge_weight in graph[current_node]:
 
-            # get the shortest distance we have to the direct successor so far,
+            # get the shortest distance we have to the direct successor so far
             # and the distance to the direct successor from the current node
             shortest_distance_so_far   = shortest_path_distances[direct_successor]
             distance_from_current_node = shortest_path_distances[current_node] + edge_weight
