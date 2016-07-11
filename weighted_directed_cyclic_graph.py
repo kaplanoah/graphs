@@ -176,7 +176,7 @@ def shortest_path_djikstras_priority_queue(graph, start_node, target_node):
 # fibonacci heap
 # insert nodes in priority queue as they're discovered
 #
-# negative cycles (Bellman-Ford)
+# negative edges (Bellman-Ford)
 # considering A*
 # reverse list (or insert at beginning) operations
 # expressing M in terms of N (complete)
