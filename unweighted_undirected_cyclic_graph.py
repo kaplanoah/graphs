@@ -33,9 +33,8 @@ def shortest_path_bfs(graph, start_node, target_node):
     visited_nodes_with_unvisited_neighbors = Queue()
     visited_nodes = set()
 
-    # initialize a dictionary to store the previous node in the
-    # shortest path to each node. we'll use this to backtrack
-    # from the target node to the start node
+    # store the previous node in the shortest path to each node, so we can
+    # build the shortest path by backtracking from the target node
     shortest_path_previous_nodes = {start_node: None}
 
     visited_nodes.add(start_node)

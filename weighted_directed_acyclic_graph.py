@@ -129,9 +129,12 @@ from itertools import islice
 
 def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 
-    # to track the shortest path to each node, initialize dictionaries
-    # to hold the path's distance and previous node
+    # track the shortest distance to each node (we use infinity to mean we haven't found
+    # a path yet because we can compare infinity with any distance and it will be longer)
     shortest_path_distances = {node: float('inf') for node in graph}
+
+    # also track the previous node in each node's shortest path, so we can
+    # build the shortest path by backtracking from the target node
     shortest_path_distances[start_node] = 0
     shortest_path_direct_predecessors = {}
 
@@ -146,8 +149,7 @@ def shortest_path(graph, topologically_ordered_nodes, start_node, target_node):
 
         for direct_successor, edge_weight in graph[current_node]:
 
-            # get the shortest distance we have to the direct successor so far
-            # and the distance to the direct successor from the current node
+            # did we find a new shortest path to the direct successor?
             shortest_distance_so_far   = shortest_path_distances[direct_successor]
             distance_from_current_node = shortest_path_distances[current_node] + edge_weight
 
