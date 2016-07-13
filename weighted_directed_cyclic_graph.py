@@ -3,8 +3,8 @@
 
 
 # graphs are represented by a dictionary of (string, list) pairs where the string
-# is the node value and the list holds tuples of the node's direct successors
-# (string, int) where the string is the direct successor's value and the int is
+# is the node label and the list holds tuples of the node's direct successors
+# (string, int) where the string is the direct successor's label and the int is
 # the weight of the edge to the direct successor
 
 graph = {

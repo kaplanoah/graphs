@@ -3,8 +3,8 @@
 
 
 # graphs are represented by a dictionary of (string, list) pairs where the string
-# is the node value and the list holds tuples of the node's direct successors
-# (string, int) where the string is the direct successor's value and the int is
+# is the node label and the list holds tuples of the node's direct successors
+# (string, int) where the string is the direct successor's label and the int is
 # the weight of the edge to the direct successor
 
 graph = {
@@ -122,8 +122,8 @@ def topological_order_kahns(graph):
 # time:   O(N+M)   where N is the number of nodes and M is the number of edges. in the worst
 #                  case the start node is the first node and the target node is the last
 #                  node so we go through all the nodes and their direct successors
-# space:  O(N)     the output, shortest path values, and shortest path predecessors hold all
-#                  the nodes in the worst case
+# space:  O(N)     the output, shortest path, and shortest path dictionaries hold all the
+#                  nodes in the worst case
 
 from itertools import islice
 

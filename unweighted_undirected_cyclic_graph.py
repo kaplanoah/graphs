@@ -3,7 +3,7 @@
 
 
 # graphs are represented by a dictionary of (string, list) pairs where the string
-# is the node value and the list holds the node's neighbors' values
+# is the node label and the list holds the node's neighbors' labels
 
 graph = {
     'A': ['B'],
