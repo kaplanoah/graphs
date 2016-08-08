@@ -35,10 +35,10 @@ def shortest_path_djikstras(graph, start_node, target_node):
     # track the shortest distance to each node (we use infinity to mean we haven't found
     # a path yet because we can compare infinity with any distance and it will be longer)
     shortest_path_distances = {node: float('inf') for node in graph}
-
-    # also track the previous node in each node's shortest path, so we can
-    # build the shortest path by backtracking from the target node
     shortest_path_distances[start_node] = 0
+
+    # also track the previous node in each node's shortest path, so we
+    # can build the shortest path by backtracking from the target node
     shortest_path_direct_predecessors = {}
 
     unvisited_nodes = set(graph)
@@ -107,10 +107,10 @@ def shortest_path_djikstras_priority_queue(graph, start_node, target_node):
     # track the shortest distance to each node (we use infinity to mean we haven't found
     # a path yet because we can compare infinity with any distance and it will be longer)
     shortest_path_distances = {node: float('inf') for node in graph}
-
-    # also track the previous node in each node's shortest path, so we can
-    # build the shortest path by backtracking from the target node
     shortest_path_distances[start_node] = 0
+
+    # also track the previous node in each node's shortest path, so we
+    # can build the shortest path by backtracking from the target node
     shortest_path_direct_predecessors = {}
 
     # set up a priority queue (binary heap) of the nodes
