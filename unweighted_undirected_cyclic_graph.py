@@ -30,8 +30,8 @@ def shortest_path_bfs(graph, start_node, target_node):
     if (start_node not in graph) or (target_node not in graph):
         raise Exception('Start or target node not in graph')
 
-    visited_nodes_with_unvisited_neighbors = Queue()
     visited_nodes = set()
+    visited_nodes_with_unvisited_neighbors = Queue()
 
     # store the previous node in the shortest path to each node, so we can
     # build the shortest path by backtracking from the target node
