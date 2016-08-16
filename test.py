@@ -1,7 +1,7 @@
 import random
 from collections import defaultdict
 
-from coloring import Node, color_graph_brute_force, color_graph_greedy_nmd, color_graph_greedy_nm, color_graph_greedy_constant_space, is_graph_legally_colored
+from coloring import Node, color_graph_brute_force, color_graph_greedy_d, color_graph_greedy, color_graph_greedy_constant_space, is_graph_legally_colored
 from weighted_directed_acyclic_graph import TopologicalOrderDfs, topological_order_kahns, shortest_path as topological_shortest_path
 from weighted_directed_cyclic_graph import shortest_path_djikstras, shortest_path_djikstras_priority_queue
 from unweighted_undirected_cyclic_graph import shortest_path_bfs
@@ -188,8 +188,8 @@ build_graphs([('A', 'B', 4), ('B', 'B', 5), ('B', 'C', 9)])
 add_shortest_path_tests('A', 'C', ['A', 'B', 'C'], ['A', 'B', 'B', 'C'])
 directed_cyclic_graphs.add(test)
 add_expected_failure('color_graph_brute_force', 'Legal coloring impossible')
-add_expected_failure('color_graph_greedy_nmd', 'Legal coloring impossible for node with loop')
-add_expected_failure('color_graph_greedy_nm', 'Legal coloring impossible for node with loop')
+add_expected_failure('color_graph_greedy_d', 'Legal coloring impossible for node with loop')
+add_expected_failure('color_graph_greedy', 'Legal coloring impossible for node with loop')
 add_expected_failure('color_graph_greedy_constant_space', 'Legal coloring impossible for node with loop')
 
 
@@ -199,8 +199,8 @@ build_graphs([('A', 'B', 4), ('B', 'B', -3), ('B', 'C', 9)])
 add_shortest_path_tests('A', 'C', ['A', 'B', 'C'], ['A', 'B', 'B', 'C'])
 directed_cyclic_graphs.add(test)
 add_expected_failure('color_graph_brute_force', 'Legal coloring impossible')
-add_expected_failure('color_graph_greedy_nmd', 'Legal coloring impossible for node with loop')
-add_expected_failure('color_graph_greedy_nm', 'Legal coloring impossible for node with loop')
+add_expected_failure('color_graph_greedy_d', 'Legal coloring impossible for node with loop')
+add_expected_failure('color_graph_greedy', 'Legal coloring impossible for node with loop')
 add_expected_failure('color_graph_greedy_constant_space', 'Legal coloring impossible for node with loop')
 
 
@@ -328,8 +328,8 @@ def verify_expected_failure(expected_failure, exception):
 
 coloring_algorithms = [
     color_graph_brute_force,
-    color_graph_greedy_nmd,
-    color_graph_greedy_nm,
+    color_graph_greedy_d,
+    color_graph_greedy,
     color_graph_greedy_constant_space,
 ]
 
