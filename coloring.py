@@ -17,9 +17,9 @@ class Node:
 #
 # try every possible combination of colors until we find a legal coloring
 #
-# time:   O(C^N * N+M)   where C is the number of colors, N is the number of nodes, and M is the
-#                        number of edges. for every combination of colors, we check if the
-#                        coloring is legal by going through every node once and every edge twice
+# time:   O(D^N * N+M)   where N is the number of nodes and M is the number of edges. for every
+#                        combination of colors, we check if the coloring is legal by going
+#                        through every node once and every edge twice
 # space:  O(1)           itertools.product is an iterator
 
 import itertools
@@ -37,8 +37,7 @@ def color_graph_brute_force(graph, colors):
         if is_graph_legally_colored(graph):
             return
 
-    if not is_graph_legally_colored(graph):
-        raise Exception('Legal coloring impossible')
+    raise Exception('Legal coloring impossible')
 
 
 def is_graph_legally_colored(graph):
@@ -62,7 +61,9 @@ def is_graph_legally_colored(graph):
 #                  through every node once and every edge twice
 # space:  O(D)     we need to track all the illegal colors for each node
 
-def color_graph_greedy(graph, colors):
+
+
+def color_graph_greedy_nmd(graph, colors):
 
     for node in graph:
 
@@ -74,6 +75,39 @@ def color_graph_greedy(graph, colors):
 
         # assign the first legal color
         node.color = [color for color in colors if color not in illegal_colors][0]
+
+
+def color_graph_greedy_nm(graph, colors):
+
+    for node in graph:
+
+        if node in node.neighbors:
+            raise Exception('Legal coloring impossible for node with loop: %s' % node.label)
+
+        # get all the node's neighbors' colors
+        illegal_colors = set((neighbor.color for neighbor in node.neighbors if neighbor.color))
+
+        # assign the first legal color. in the worst case we'll need to
+        # look at one more color than the number of illegal colors
+        for color in colors:
+            if color not in illegal_colors:
+                node.color = color
+                break
+
+
+def color_graph_greedy_constant_space(graph, colors):
+
+    for node in graph:
+
+        if node in node.neighbors:
+            raise Exception('Legal coloring impossible for node with loop: %s' % node.label)
+
+        # assign the first legal color. in the worst case we'll need to
+        # look at one more color than the number of illegal colors
+        for color in colors:
+            if color not in (neighbor.color for neighbor in node.neighbors if neighbor.color):
+                node.color = color
+                break
 
 
 # notes:
@@ -90,7 +124,7 @@ def color_graph_greedy(graph, colors):
 # set of colors (unordered)
 # itertools by hand
 # temporarily destructive (risky with multithreating)
-# expressing C and M in terms of N
+# expressing D and M in terms of N
 # backtracking (not needed because we know D+1 colors work)
 #
 # edge cases
