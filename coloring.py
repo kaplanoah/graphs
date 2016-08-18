@@ -83,7 +83,9 @@ def color_graph_greedy_d(graph, colors):
 #                  if it's a loop and to get the illegal colors for the node at the
 #                  other end, and the colors twice up to at most one more color than
 #                  the number of edges
-# space:  O(M)     we store all the illegal colors for each node
+# space:  O(D)     we store all the illegal colors for each node, which will be D if
+#                  the neighbors of the node with the maximum degree all have
+#                  different colors
 
 def color_graph_greedy(graph, colors):
 
@@ -116,7 +118,7 @@ def color_graph_greedy_constant_space(graph, colors):
 
         # assign the first legal color. by using generator expressions we don't
         # don't store colors, but we iterate over every neighbor for every
-        # color up to at most one more color than the number of illegal colors
+        # color up to at most one more color than the number of neighbors
         node.color = next(color for color in colors if color not in
             (neighbor.color for neighbor in node.neighbors if neighbor.color)
         )
